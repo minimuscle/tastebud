@@ -1,12 +1,6 @@
 node_modules
 
-.cache
-.env
-.vercel
-.output
-.yarn
-
-/build/
+/.cache
+/build
 /public/build
-/api/index.js
-/api/index.js.map
+.env
