@@ -68,8 +68,7 @@ h6 {
 }
 
 .mapboxgl-control-container a:not(.mapboxgl-ctrl-logo):hover {
-  color: #333333;
-  text-decoration: underline;
+  color: #000000;
 }
 
 .mapboxgl-ctrl-attrib-inner {

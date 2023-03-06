@@ -21,6 +21,7 @@ export default function MapComponent(props) {
     document.addEventListener('DOMContentLoaded', () => map.resize())
   })
 
+  //TODO: This needs to update the sidebar
   useEffect(() => {
     if (!map.current) return // wait for map to initialize
     map.current.on('move', () => {
@@ -28,9 +29,14 @@ export default function MapComponent(props) {
       setLat(map.current.getCenter().lat.toFixed(4))
       setZoom(map.current.getZoom().toFixed(2))
     })
+    map.current.on('contextmenu', () => {
+      console.log('CLICKED')
+    })
     console.log(lat)
   })
 
+  // ! This should contain the sidebar here so that any data can be passed to it via props, as it doesnt need to be a separate component
+  // ? should it be named sidebar, or overlay? Separate component or part of the map - I think separate.
   return (
     <div id='map'>
       <div ref={mapContainer} className='map-container' />
