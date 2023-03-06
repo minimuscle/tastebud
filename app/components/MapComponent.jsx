@@ -21,6 +21,16 @@ export default function MapComponent(props) {
     document.addEventListener('DOMContentLoaded', () => map.resize())
   })
 
+  useEffect(() => {
+    if (!map.current) return // wait for map to initialize
+    map.current.on('move', () => {
+      setLng(map.current.getCenter().lng.toFixed(4))
+      setLat(map.current.getCenter().lat.toFixed(4))
+      setZoom(map.current.getZoom().toFixed(2))
+    })
+    console.log(lat)
+  })
+
   return (
     <div id='map'>
       <div ref={mapContainer} className='map-container' />
