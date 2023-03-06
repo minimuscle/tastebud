@@ -14,9 +14,12 @@ export default function MapComponent(props) {
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v12',
+      attributionControl: true,
       center: [lng, lat],
       zoom: zoom,
     })
+
+    document.addEventListener('DOMContentLoaded', () => map.resize())
   })
 
   return (

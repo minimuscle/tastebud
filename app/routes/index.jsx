@@ -1,5 +1,6 @@
 import { useLoaderData } from '@remix-run/react'
 import MapComponent from '~/components/MapComponent'
+import styles from '~/styles/index.css'
 
 export default function Index() {
   const API = useLoaderData()
@@ -16,5 +17,5 @@ export function loader() {
 }
 
 export function links() {
-  return [{ rel: 'stylesheet', href: '../styles/index.css' }]
+  return [{ rel: 'stylesheet', href: styles }]
 }
