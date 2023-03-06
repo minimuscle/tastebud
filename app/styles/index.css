@@ -1,6 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+  --default-border-radius: 7.5px;
+  --color-background: #ffffff;
+  --color-primary: #757575;
+  --default-padding: 10px;
+}
+
 * {
   margin: 0;
   padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Raleway', sans-serif;
+}
+
+#overlay {
+  position: absolute;
+}
+
+.sidebar {
+  margin: 25px;
+  background-color: var(--color-background);
+  border-radius: var(--default-border-radius);
+  padding: var(--default-padding);
+  width: 20%;
+  height: calc(100vh - 75px);
+}
+
+.sidebar h1 {
+  text-align: center;
+  padding-top: 20px;
 }
 
 .map-container {
@@ -10,12 +47,33 @@
 }
 
 .mapboxgl-control-container {
-  margin-top: -55px;
+  position: absolute;
+  right: 0;
+  margin-top: -60px;
   margin-left: 15px;
 }
 
+.mapboxgl-ctrl-attrib-button {
+  display: none;
+}
+
 .mapboxgl-control-container a:not(.mapboxgl-ctrl-logo) {
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 10px;
-  border-radius: 7.5px;
+  background-color: var(--color-background);
+  padding: var(--default-padding);
+  margin-right: 5px;
+  border-radius: var(--default-border-radius);
+  color: #acacac;
+  text-decoration: none;
+  right: 0;
+}
+
+.mapboxgl-control-container a:not(.mapboxgl-ctrl-logo):hover {
+  color: #333333;
+  text-decoration: underline;
+}
+
+.mapboxgl-ctrl-attrib-inner {
+  display: flex;
+  float: right;
+  right: 0;
 }

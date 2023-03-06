@@ -4,9 +4,9 @@ import mapboxgl from 'mapbox-gl' // eslint-disable-line import/no-webpack-loader
 export default function MapComponent(props) {
   const mapContainer = useRef(null)
   const map = useRef(null)
-  const [lng, setLng] = useState(-70.9)
-  const [lat, setLat] = useState(42.35)
-  const [zoom, setZoom] = useState(9)
+  const [lng, setLng] = useState(144.96)
+  const [lat, setLat] = useState(-37.82)
+  const [zoom, setZoom] = useState(12)
   mapboxgl.accessToken = props.API
 
   useEffect(() => {
@@ -14,7 +14,6 @@ export default function MapComponent(props) {
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v12',
-      attributionControl: true,
       center: [lng, lat],
       zoom: zoom,
     })
@@ -23,7 +22,7 @@ export default function MapComponent(props) {
   })
 
   return (
-    <div>
+    <div id='map'>
       <div ref={mapContainer} className='map-container' />
     </div>
   )
