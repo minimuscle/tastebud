@@ -24,6 +24,7 @@ h6 {
 
 #overlay {
   position: absolute;
+  width: 100%;
 }
 
 .sidebar {
@@ -32,6 +33,13 @@ h6 {
   border-radius: var(--default-border-radius);
   padding: var(--default-padding);
   width: 20%;
+  height: calc(100vh - 75px);
+}
+
+.mapview {
+  margin: 25px;
+  right: 0;
+  width: 80%;
   height: calc(100vh - 75px);
 }
 
@@ -75,4 +83,15 @@ h6 {
   display: flex;
   float: right;
   right: 0;
+}
+
+.category-select {
+  margin-top: 50px;
+}
+
+.category-select img {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  padding-right: 10px;
 }
