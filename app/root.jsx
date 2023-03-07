@@ -5,12 +5,14 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-} from "@remix-run/react"
+} from '@remix-run/react'
+import { ChakraProvider } from '@chakra-ui/react'
+import AppTheme from './styles/AppTheme'
 
 export const meta = () => ({
-  charset: "utf-8",
-  title: "New Remix App",
-  viewport: "width=device-width,initial-scale=1",
+  charset: 'utf-8',
+  title: 'New Remix App',
+  viewport: 'width=device-width,initial-scale=1',
 })
 
 export default function App() {
@@ -21,7 +23,10 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <ChakraProvider theme={AppTheme}>
+          <Outlet />
+        </ChakraProvider>
+
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

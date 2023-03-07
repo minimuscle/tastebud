@@ -10,7 +10,7 @@
 * {
   margin: 0;
   padding: 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', sans-serif !important;
 }
 
 h1,
@@ -19,7 +19,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Raleway', sans-serif;
+  font-family: 'Raleway', sans-serif !important;
 }
 
 #overlay {
@@ -28,12 +28,9 @@ h6 {
 }
 
 .sidebar {
-  margin: 25px;
-  background-color: var(--color-background);
+  margin: 25px !important;
+  height: calc(100vh - 55px);
   border-radius: var(--default-border-radius);
-  padding: var(--default-padding);
-  width: 20%;
-  height: calc(100vh - 75px);
 }
 
 .mapview {
@@ -90,8 +87,8 @@ h6 {
 }
 
 .category-select img {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   vertical-align: middle;
   padding-right: 10px;
 }

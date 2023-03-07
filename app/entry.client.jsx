@@ -1,7 +1,7 @@
-import { RemixBrowser } from "@remix-run/react"
-import { startTransition, StrictMode } from "react"
-import "mapbox-gl/dist/mapbox-gl.css"
-import { hydrateRoot } from "react-dom/client"
+import { RemixBrowser } from '@remix-run/react'
+import { startTransition, StrictMode } from 'react'
+import 'mapbox-gl/dist/mapbox-gl.css'
+import { hydrateRoot } from 'react-dom/client'
 
 function hydrate() {
   startTransition(() => {
@@ -14,7 +14,7 @@ function hydrate() {
   })
 }
 
-if (typeof requestIdleCallback === "function") {
+if (typeof requestIdleCallback === 'function') {
   requestIdleCallback(hydrate)
 } else {
   // Safari doesn't support requestIdleCallback
