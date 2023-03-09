@@ -27,17 +27,19 @@ h6 {
   width: 100%;
 }
 
+.clickable {
+  pointer-events: all;
+}
+
 .sidebar {
   margin: 25px !important;
   height: calc(100vh - 55px);
   border-radius: var(--default-border-radius);
 }
 
-.mapview {
-  margin: 25px;
-  right: 0;
-  width: 80%;
-  height: calc(100vh - 75px);
+.map-area {
+  margin-left: 262px; /*TODO: This needs to be dynamic or based on the size of the sidebar*/
+  pointer-events: none;
 }
 
 .sidebar h1 {
@@ -91,4 +93,8 @@ h6 {
   height: 30px;
   vertical-align: middle;
   padding-right: 10px;
+}
+
+.searchBtn {
+  margin: 25px 0;
 }
