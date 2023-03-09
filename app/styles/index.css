@@ -47,6 +47,14 @@ h6 {
   padding-top: 20px;
 }
 
+.sidebar-bottom {
+  position: inherit;
+  width: 100%;
+  bottom: 0;
+  margin: inherit;
+  margin-right: 50px;
+}
+
 .map-container {
   position: absolute !important;
   height: 100vh;

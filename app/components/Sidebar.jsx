@@ -90,12 +90,14 @@ export default function Sidebar(props) {
         onChange={(food) => props.setFood(food.label)}
       />
       {getBtnText()}
-      <Heading as='h4' size='md'>
-        Can't find what you're looking for? {props.food}
-      </Heading>
-      <Button colorScheme='green' width='100%'>
-        Add Location
-      </Button>
+      <div className='sidebar-bottom'>
+        <Heading as='h4' size='md'>
+          Can't find what you're looking for? {props.food}
+        </Heading>
+        <Button colorScheme='green' width='100%'>
+          Add Location
+        </Button>
+      </div>
     </Container>
   )
 }
