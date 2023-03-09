@@ -10,7 +10,7 @@ export default function MapComponent(props) {
   const [lat, setLat] = useState(-37.82)
   const [food, setFood] = useState("")
   const [zoom, setZoom] = useState(12)
-  const [locations, setLocations] = useState([])
+  const [marker, addMarker] = useState([])
   mapboxgl.accessToken = props.API
 
   useEffect(() => {
@@ -46,12 +46,30 @@ export default function MapComponent(props) {
     )
     const response = await data.json()
     console.log(response)
+
+    marker.forEach((item) => {
+      item.remove()
+    })
+
+    //Map locations for the area
+    let locations = []
+    response.features.map((location, key) => {
+      locations.push(
+        new mapboxgl.Marker()
+          .setLngLat([location.center[0], location.center[1]])
+          .addTo(map.current)
+      )
+      console.log(locations)
+    })
+    addMarker(marker.concat(locations))
+    console.log(marker)
   }
 
   // ! This should contain the sidebar here so that any data can be passed to it via props, as it doesnt need to be a separate component
   // ? should it be named sidebar, or overlay? Separate component or part of the map - I think separate.
   return (
     <div id='map'>
+      <div ref={mapContainer} className='map-container' />
       <Sidebar food={food} setFood={setFood} search={search} />
       <Center id='overlay' className='map-area'>
         <Button
@@ -64,8 +82,6 @@ export default function MapComponent(props) {
           Search Area For {food.slice(-1) === "s" ? food : `${food}s`}
         </Button>
       </Center>
-
-      <div ref={mapContainer} className='map-container' />
     </div>
   )
 }
