@@ -42,7 +42,7 @@ export default function MapComponent(props) {
   const search = async () => {
     console.log("searching")
     const data = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/restaurant.json?proximity=${lng}%2C${lat}&access_token=${props.API}`
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/restaurant.json?proximity=${lng}%2C${lat}&limit=10&access_token=${props.API}`
     )
     const response = await data.json()
     console.log(response)
