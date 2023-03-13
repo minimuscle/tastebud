@@ -6,34 +6,27 @@ import { Center, Button } from '@chakra-ui/react'
 export default function MapComponent(props) {
   const mapContainer = useRef(null)
   const map = useRef(null)
-  const [lng, setLng] = useState(140.96)
+  const [lng, setLng] = useState(144.96)
   const [lat, setLat] = useState(-37.82)
   const [food, setFood] = useState('')
-  const [zoom, setZoom] = useState(12)
+  const [zoom, setZoom] = useState(13)
   const [marker, addMarker] = useState([])
   mapboxgl.accessToken = props.API
 
   useEffect(() => {
     if (map.current) return // initialize map only once
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [lng, lat],
-      zoom: zoom,
-    })
-    const geolocate = new mapboxgl.GeolocateControl({
-      positionOptions: {
-        enableHighAccuracy: true,
-      },
-      trackUserLocation: true,
-      showUserHeading: true,
-    })
-    map.current.addControl(geolocate)
-    map.current.on('load', () => {
-      geolocate.trigger()
-    })
+    navigator.geolocation.getCurrentPosition((pos) => {
+      setLat(pos.coords.latitude)
+      setLng(pos.coords.longitude)
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [pos.coords.longitude, pos.coords.latitude],
+        zoom: zoom,
+      })
 
-    document.addEventListener('DOMContentLoaded', () => map.resize())
+      document.addEventListener('DOMContentLoaded', () => map.resize())
+    })
   })
 
   //TODO: This needs to update the sidebar
