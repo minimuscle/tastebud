@@ -1,4 +1,4 @@
-import Select from "react-select"
+import Select from 'react-select'
 import {
   Container,
   Heading,
@@ -7,34 +7,35 @@ import {
   Text,
   Button,
   Spacer,
-} from "@chakra-ui/react"
+  Center,
+} from '@chakra-ui/react'
 
 //TODO: This should probably be grabbed via some smart display not hard coded
 const options = [
   {
-    value: "all",
-    label: "All",
-    image: "/icons/infinity.svg",
+    value: 'all',
+    label: 'All',
+    image: '/icons/infinity.svg',
   },
   {
-    value: "burger",
-    label: "Burger",
-    image: "/icons/hamburger.svg",
+    value: 'burger',
+    label: 'Burger',
+    image: '/icons/hamburger.svg',
   },
   {
-    value: "milkshake",
-    label: "Milkshake",
-    image: "/icons/milkshake.svg",
+    value: 'milkshake',
+    label: 'Milkshake',
+    image: '/icons/milkshake.svg',
   },
   {
-    value: "fries",
-    label: "Fries",
-    image: "/icons/fries.svg",
+    value: 'fries',
+    label: 'Fries',
+    image: '/icons/fries.svg',
   },
   {
-    value: "hotchocolate",
-    label: "Hot Chocolate",
-    image: "/icons/hotchocolate.svg",
+    value: 'hotchocolate',
+    label: 'Hot Chocolate',
+    image: '/icons/hotchocolate.svg',
   },
 ]
 
@@ -59,8 +60,8 @@ export default function Sidebar(props) {
         className='searchBtn'
         onClick={props.search}
       >
-        Search Area For{" "}
-        {props.food.slice(-1) === "s" || props.food === "All"
+        Search Area For{' '}
+        {props.food.slice(-1) === 's' || props.food === 'All'
           ? props.food
           : `${props.food}s`}
       </Button>
@@ -91,10 +92,14 @@ export default function Sidebar(props) {
       />
       {getBtnText()}
       <div className='sidebar-bottom'>
-        <Heading as='h4' size='md'>
-          Can't find what you're looking for? {props.food}
-        </Heading>
-        <Button colorScheme='green' width='100%'>
+        <Center>
+          <Heading as='h4' size='md'>
+            Can't find what you're looking for?
+          </Heading>
+        </Center>
+
+        <br />
+        <Button colorScheme='green' width='100%' onClick={props.addLocation}>
           Add Location
         </Button>
       </div>

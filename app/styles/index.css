@@ -108,3 +108,9 @@ h6 {
 .searchBtn {
   margin: 25px 0;
 }
+
+.search-results {
+  padding: 15px 0;
+  margin: 10px 0;
+  position: absolute;
+}

@@ -1,7 +1,25 @@
 import React, { useRef, useEffect, useState } from 'react'
 import mapboxgl from 'mapbox-gl' // eslint-disable-line import/no-webpack-loader-syntax
 import Sidebar from '~/components/Sidebar'
-import { Center, Button } from '@chakra-ui/react'
+import {
+  Center,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  Text,
+  Input,
+  Box,
+  Container,
+  VStack,
+  StackDivider,
+} from '@chakra-ui/react'
+import NewLocation from '~/routes/NewLocation'
 
 export default function MapComponent(props) {
   const mapContainer = useRef(null)
@@ -11,6 +29,10 @@ export default function MapComponent(props) {
   const [food, setFood] = useState('')
   const [zoom, setZoom] = useState(13)
   const [marker, addMarker] = useState([])
+  const [searchResults, setSearchResults] = useState([])
+  const [results, setResults] = useState(null)
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [locationModal, setLocationModal] = useState(false)
   mapboxgl.accessToken = props.API
 
   useEffect(() => {
@@ -40,7 +62,6 @@ export default function MapComponent(props) {
     map.current.on('contextmenu', () => {
       console.log('CLICKED')
     })
-    console.log(lat)
   })
 
   const search = async () => {
@@ -49,7 +70,6 @@ export default function MapComponent(props) {
       `https://api.mapbox.com/geocoding/v5/mapbox.places/restaurant.json?proximity=${lng}%2C${lat}&limit=10&access_token=${props.API}`
     )
     const response = await data.json()
-    console.log(response)
 
     marker.forEach((item) => {
       item.remove()
@@ -69,12 +89,89 @@ export default function MapComponent(props) {
     console.log(marker)
   }
 
+  useEffect(() => {
+    console.log(searchResults)
+    const items = (
+      <VStack divider={<StackDivider borderColor='gray.200' />} align='stretch'>
+        {searchResults.map((item, key) => {
+          return (
+            <Box
+              key={key}
+              _hover={{ background: 'gray.200' }}
+              p='2'
+              borderRadius='7.5px'
+            >
+              <Text
+                align='left'
+                as='button'
+                onClick={() => {
+                  closeSearch()
+                  setLocationModal(true)
+                }}
+              >
+                {item.place_name}
+              </Text>
+            </Box>
+          )
+        })}
+      </VStack>
+    )
+    setResults(items)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchResults])
+
+  const suggest = async (e) => {
+    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${e.target.value}.json?proximity=${lng}%2C${lat}&country=au&limit=10&access_token=${props.API}`
+    const response = await (await fetch(url)).json()
+    setSearchResults(response.features)
+  }
+
+  const closeSearch = () => {
+    onClose()
+    setSearchResults([])
+  }
+
   // ! This should contain the sidebar here so that any data can be passed to it via props, as it doesnt need to be a separate component
   // ? should it be named sidebar, or overlay? Separate component or part of the map - I think separate.
   return (
     <div id='map'>
       <div ref={mapContainer} className='map-container' />
-      <Sidebar food={food} setFood={setFood} search={search} />
+      <Modal isOpen={isOpen} onClose={closeSearch}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add new location</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Input
+              autoFocus
+              placeholder='Search for location...'
+              onChange={suggest}
+            />
+            <Container
+              borderWidth='1px'
+              borderRadius='lg'
+              boxShadow='2xl'
+              bg='white'
+              className='search-results'
+              hidden={searchResults.length > 0 ? false : true}
+            >
+              {results}
+            </Container>
+          </ModalBody>
+          <ModalFooter></ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={locationModal} onClose={() => setLocationModal(false)}>
+        <NewLocation />
+      </Modal>
+
+      <Sidebar
+        food={food}
+        setFood={setFood}
+        search={search}
+        addLocation={onOpen}
+      />
       <Center id='overlay' className='map-area'>
         <Button
           size='sm'
