@@ -18,6 +18,7 @@ import {
   Container,
   VStack,
   StackDivider,
+  Heading,
 } from '@chakra-ui/react'
 import NewLocation from '~/routes/NewLocation'
 
@@ -29,10 +30,11 @@ export default function MapComponent(props) {
   const [food, setFood] = useState('')
   const [zoom, setZoom] = useState(13)
   const [marker, addMarker] = useState([])
+  const [chosen, setChosen] = useState(null)
   const [searchResults, setSearchResults] = useState([])
   const [results, setResults] = useState(null)
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [locationModal, setLocationModal] = useState(false)
+  const [locationModal, setLocationModal] = useState(true)
   mapboxgl.accessToken = props.API
 
   useEffect(() => {
@@ -100,16 +102,19 @@ export default function MapComponent(props) {
               _hover={{ background: 'gray.200' }}
               p='2'
               borderRadius='7.5px'
+              as='button'
+              onClick={() => {
+                closeSearch()
+                setLocationModal(true)
+                setChosen(item)
+              }}
             >
-              <Text
-                align='left'
-                as='button'
-                onClick={() => {
-                  closeSearch()
-                  setLocationModal(true)
-                }}
-              >
-                {item.place_name}
+              <Heading as='h4' size='md' align='left'>
+                {item.text}
+              </Heading>
+              <Text color='gray.500' align='left'>
+                {item.properties.address}, {item.context[1].text},{' '}
+                {item.context[3].text}, {item.context[4].text}
               </Text>
             </Box>
           )
@@ -121,7 +126,7 @@ export default function MapComponent(props) {
   }, [searchResults])
 
   const suggest = async (e) => {
-    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${e.target.value}.json?proximity=${lng}%2C${lat}&country=au&limit=10&access_token=${props.API}`
+    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${e.target.value}.json?proximity=${lng}%2C${lat}&types=poi&country=au&limit=10&access_token=${props.API}`
     const response = await (await fetch(url)).json()
     setSearchResults(response.features)
   }
@@ -162,9 +167,11 @@ export default function MapComponent(props) {
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={locationModal} onClose={() => setLocationModal(false)}>
-        <NewLocation />
-      </Modal>
+      <NewLocation
+        isOpen={locationModal}
+        onClose={() => setLocationModal(false)}
+        result={chosen}
+      />
 
       <Sidebar
         food={food}
