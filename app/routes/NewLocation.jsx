@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import {
   Button,
-  Container,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -13,10 +12,8 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Text,
 } from '@chakra-ui/react'
-import { MdArrowBack } from 'react-icons/md'
-import { Field, Form, Formik, useFormik } from 'formik'
+import { Field, Form, Formik } from 'formik'
 import * as yup from 'yup'
 
 export default function NewLocation(props) {
@@ -24,20 +21,14 @@ export default function NewLocation(props) {
 
   useEffect(() => {
     console.log(props.result)
-
     if (props.result) setDisabled(true)
   }, [props.result])
 
   return (
-    <Modal isOpen={props.isOpen} onClose={props.onClose} size='xl' isCentered>
+    <Modal isOpen={props.isOpen} onClose={props.onClose} size='xl'>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>
-          <Button leftIcon={<MdArrowBack />} m={4} onClick={props.onClose}>
-            Back
-          </Button>
-          Add a new location!
-        </ModalHeader>
+        <ModalHeader>Add a new location!</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Formik
@@ -84,12 +75,7 @@ export default function NewLocation(props) {
             )}
           </Formik>
         </ModalBody>
-        <ModalFooter>
-          <Button m={4} colorScheme='blue'>
-            Save
-          </Button>
-          <Button onClick={props.onClose}>Close</Button>
-        </ModalFooter>
+        <ModalFooter></ModalFooter>
       </ModalContent>
     </Modal>
   )
