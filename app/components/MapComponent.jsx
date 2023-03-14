@@ -34,7 +34,7 @@ export default function MapComponent(props) {
   const [searchResults, setSearchResults] = useState([])
   const [results, setResults] = useState(null)
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [locationModal, setLocationModal] = useState(true)
+  const [locationModal, setLocationModal] = useState(false)
   const [coords, setCoords] = useState({ x: 0, y: 0 })
   mapboxgl.accessToken = props.API
 

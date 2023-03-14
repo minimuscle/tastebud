@@ -160,19 +160,12 @@ export default function NewLocation(props) {
                 <FormErrorMessage>{errors.category.message}</FormErrorMessage>
                 <FormHelperText>Choose at least 1 category.</FormHelperText>
               </FormControl>
-              <Button
-                mt={4}
-                colorScheme='teal'
-                isLoading={props.isSubmitting}
-                type='submit'
-                width='100%'
-              >
+              <Button mt={4} colorScheme='teal' type='submit' width='100%'>
                 Submit Location
               </Button>
             </VStack>
           </form>
         </ModalBody>
-        <ModalFooter></ModalFooter>
       </ModalContent>
     </Modal>
   )
