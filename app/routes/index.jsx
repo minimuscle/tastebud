@@ -14,7 +14,7 @@ export default function Index() {
 
 export function loader() {
   const MAP_API = process.env.MAPS_ACCESS_TOKEN
-  const STAGE = process.env.STAGE
+  const STAGE = 'dev'
 
   console.log(STAGE)
   const API = {
