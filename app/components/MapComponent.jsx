@@ -20,7 +20,7 @@ import {
   StackDivider,
   Heading,
 } from '@chakra-ui/react'
-import NewLocation from '~/routes/NewLocation'
+import NewLocation from '~/components/NewLocation'
 
 export default function MapComponent(props) {
   const mapContainer = useRef(null)
@@ -35,6 +35,7 @@ export default function MapComponent(props) {
   const [results, setResults] = useState(null)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [locationModal, setLocationModal] = useState(true)
+  const [coords, setCoords] = useState({ x: 0, y: 0 })
   mapboxgl.accessToken = props.API
 
   useEffect(() => {
@@ -68,12 +69,18 @@ export default function MapComponent(props) {
 
   const search = async () => {
     console.log('searching')
-    const data = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/restaurant.json?proximity=${lng}%2C${lat}&limit=10&access_token=${props.API}`
-    )
-    const response = await data.json()
+    const url = `https://wwi4q03ohh.execute-api.ap-southeast-2.amazonaws.com/${props.STAGE}/get`
+    const data = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
 
-    marker.forEach((item) => {
+      body: JSON.stringify('HELLO FROM MY PROGRAM'),
+    })
+    const response = await data.json()
+    console.log(response)
+    /*marker.forEach((item) => {
       item.remove()
     })
 
@@ -88,11 +95,10 @@ export default function MapComponent(props) {
       return console.log(locations)
     })
     addMarker(marker.concat(locations))
-    console.log(marker)
+    console.log(marker)*/
   }
 
   useEffect(() => {
-    console.log(searchResults)
     const items = (
       <VStack divider={<StackDivider borderColor='gray.200' />} align='stretch'>
         {searchResults.map((item, key) => {
@@ -119,6 +125,23 @@ export default function MapComponent(props) {
             </Box>
           )
         })}
+        <Box
+          _hover={{ background: 'gray.200' }}
+          p='2'
+          borderRadius='7.5px'
+          as='button'
+          onClick={() => {
+            closeSearch()
+            //TODO: Create a marker that can be clicked on via map
+          }}
+        >
+          <Heading as='h4' size='md' color='red.500' align='center'>
+            Can't find location?
+          </Heading>
+          <Text color='gray.500' align='center'>
+            Click here to create a marker at the location
+          </Text>
+        </Box>
       </VStack>
     )
     setResults(items)
@@ -126,7 +149,7 @@ export default function MapComponent(props) {
   }, [searchResults])
 
   const suggest = async (e) => {
-    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${e.target.value}.json?proximity=${lng}%2C${lat}&types=poi&country=au&limit=10&access_token=${props.API}`
+    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${e.target.value}.json?proximity=${lng}%2C${lat}&types=poi&country=au&limit=5&access_token=${props.API}`
     const response = await (await fetch(url)).json()
     setSearchResults(response.features)
   }
@@ -135,6 +158,20 @@ export default function MapComponent(props) {
     onClose()
     setSearchResults([])
   }
+
+  useEffect(() => {
+    const handleWindowMouseMove = (event) => {
+      setCoords({
+        x: event.clientX,
+        y: event.clientY,
+      })
+    }
+    window.addEventListener('mousemove', handleWindowMouseMove)
+
+    return () => {
+      window.removeEventListener('mousemove', handleWindowMouseMove)
+    }
+  }, [])
 
   // ! This should contain the sidebar here so that any data can be passed to it via props, as it doesnt need to be a separate component
   // ? should it be named sidebar, or overlay? Separate component or part of the map - I think separate.
@@ -171,6 +208,7 @@ export default function MapComponent(props) {
         isOpen={locationModal}
         onClose={() => setLocationModal(false)}
         result={chosen}
+        STAGE={props.STAGE}
       />
 
       <Sidebar
@@ -179,6 +217,12 @@ export default function MapComponent(props) {
         search={search}
         addLocation={onOpen}
       />
+      <p>
+        Mouse positioned at:{' '}
+        <b>
+          ({coords.x}, {coords.y})
+        </b>
+      </p>
       <Center id='overlay' className='map-area'>
         <Button
           size='sm'

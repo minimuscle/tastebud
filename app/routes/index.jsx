@@ -7,14 +7,21 @@ export default function Index() {
   const API = useLoaderData()
   return (
     <div>
-      <MapComponent API={API} />
+      <MapComponent API={API.MAP_API} STAGE={API.STAGE} />
     </div>
   )
 }
 
 export function loader() {
-  const API = process.env.MAPS_ACCESS_TOKEN
-  return API || null
+  const MAP_API = process.env.MAPS_ACCESS_TOKEN
+  const STAGE = process.env.STAGE
+
+  console.log(STAGE)
+  const API = {
+    MAP_API: MAP_API,
+    STAGE: STAGE,
+  }
+  return API
 }
 
 export function links() {

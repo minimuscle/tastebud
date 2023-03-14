@@ -10,7 +10,7 @@ import {
   Center,
 } from '@chakra-ui/react'
 
-//TODO: This should probably be grabbed via some smart display not hard coded
+//TODO: This should probably be grabbed via some smart display not hard coded - from a dynamoDB table for sure
 const options = [
   {
     value: 'all',
@@ -78,6 +78,7 @@ export default function Sidebar(props) {
     >
       <Heading as='h1'>Food Review</Heading>
       <Select
+        instanceId='1'
         placeholder='Select A Food Category...'
         className='category-select'
         options={options}
