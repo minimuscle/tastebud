@@ -76,7 +76,7 @@ export default function Sidebar(props) {
       id='overlay'
       className='sidebar'
     >
-      <Heading as='h1'>Food Review</Heading>
+      <Heading as='h1'>TasteBud</Heading>
       <Select
         instanceId='1'
         placeholder='Select A Food Category...'
