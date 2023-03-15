@@ -20,6 +20,7 @@ import {
   StackDivider,
   Heading,
 } from '@chakra-ui/react'
+import ngeohash from 'ngeohash'
 import NewLocation from '~/components/NewLocation'
 
 export default function MapComponent(props) {
@@ -65,6 +66,28 @@ export default function MapComponent(props) {
     map.current.on('contextmenu', () => {
       console.log('CLICKED')
     })
+    /*const hash = ngeohash.encode(lat, lng, 5)
+    console.log(hash)
+    const decoded = ngeohash.decode(hash)
+    console.log(decoded)
+    const nearby = ngeohash.neighbors(hash)
+    console.log(nearby)
+
+    marker.forEach((item) => {
+      item.remove()
+    })
+
+    let locations = []
+    nearby.forEach((item) => {
+      const latlng = ngeohash.decode(item)
+      console.log(latlng)
+      locations.push(
+        new mapboxgl.Marker()
+          .setLngLat([latlng.longitude, latlng.latitude])
+          .addTo(map.current)
+      )
+      addMarker(marker.concat(locations))
+    })*/
   })
 
   const search = async () => {
@@ -80,9 +103,7 @@ export default function MapComponent(props) {
     })
     const response = await data.json()
     console.log(response)
-    /*marker.forEach((item) => {
-      item.remove()
-    })
+    /*
 
     //Map locations for the area
     let locations = []
@@ -151,6 +172,7 @@ export default function MapComponent(props) {
   const suggest = async (e) => {
     const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${e.target.value}.json?proximity=${lng}%2C${lat}&types=poi&country=au&limit=5&access_token=${props.API}`
     const response = await (await fetch(url)).json()
+    console.log(response)
     setSearchResults(response.features)
   }
 

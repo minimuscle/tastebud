@@ -16,7 +16,8 @@ import {
   ModalOverlay,
   VStack,
 } from '@chakra-ui/react'
-import { useFormik } from 'formik'
+import geohash from 'ngeohash'
+import objectHash from 'object-hash'
 import * as yup from 'yup'
 
 //TODO: This should probably be grabbed via some smart display not hard coded - from a dynamoDB table for sure
@@ -52,8 +53,9 @@ export default function NewLocation(props) {
   const [disabled, setDisabled] = useState(false)
   const [category, setCategory] = useState([])
   const [address, setAddress] = useState('')
+  const [id, setId] = useState()
+  const [hash, setHash] = useState()
   const [name, setName] = useState('')
-
   let errors = {
     name: {
       error: false,
@@ -81,17 +83,26 @@ export default function NewLocation(props) {
         }`
       )
       setName(props.result.text)
+      setId(objectHash.MD5(props.result.center))
+      setHash(geohash.encode(props.result.center[0], props.result.center[1]))
+      console.log(
+        geohash.encode(props.result.center[0], props.result.center[1])
+      )
     }
-  }, [props.result, address])
+  }, [props.result, address, hash])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log(name, address, category)
+    console.log(id, name, address, category, hash)
     const body = {
+      id,
       name,
       address,
       category,
+      hash,
     }
+
+    //TODO: Put this in a try/catch loop and catch the exceptions to tell the user
     const url = `https://wwi4q03ohh.execute-api.ap-southeast-2.amazonaws.com/${props.STAGE}/location/add`
     const data = await fetch(url, {
       method: 'POST',
