@@ -90,6 +90,10 @@ export default function MapComponent(props) {
     })*/
   })
 
+  const addReview = () => {
+    console.log('working')
+  }
+
   const search = async () => {
     //Removes the markers before re-adding them via this search
     console.log(marker)
@@ -99,6 +103,7 @@ export default function MapComponent(props) {
     //This sets the size of the area to search by using significant figures for the geohash
     const precision = zoom >= 18 ? 7 : zoom >= 14 ? 6 : 5
     //! //FIXME: This needs to be dynamic
+    //TODO: This should search a wider area but return less results. It should cache the geohash location(s) (to 5 precision) and then use that.
     const hash = geohash.encode(lat, lng, 5)
     console.log('searching ' + hash)
     try {
@@ -112,22 +117,28 @@ export default function MapComponent(props) {
       })
       const response = await data.json()
       console.log(response)
+      //This should contain all results.
+      //Here we refine to just what the selection is.
       let locations = []
       response.forEach((item) => {
-        const latlng = geohash.decode(item.hash)
-        console.log(item)
-        const point = new mapboxgl.Marker()
-          .setLngLat([latlng.longitude, latlng.latitude])
-          .setPopup(
-            new mapboxgl.Popup().setHTML(
-              `<h1>${item.name}</h1><p>${item.address}</p>`
+        console.log(item.category)
+        if (item.category.includes(food) || food === 'all') {
+          const latlng = geohash.decode(item.hash)
+          console.log(item)
+          const point = new mapboxgl.Marker()
+            .setLngLat([latlng.longitude, latlng.latitude])
+            //The styling here will be temporary
+            .setPopup(
+              new mapboxgl.Popup().setHTML(
+                `<h1><b>${item.name}</b></h1><p>${item.address}</p>`
+              )
             )
-          )
-          .addTo(map.current)
-        /*point.getElement().addEventListener('click', () => {
-          window.alert('marker clicked')
-        })*/
-        locations.push(point)
+            .addTo(map.current)
+          /*point.getElement().addEventListener('click', () => {
+            window.alert('marker clicked')
+          })*/
+          locations.push(point)
+        }
       })
       console.log('locations: ')
       addMarker(marker.concat(locations))

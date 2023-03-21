@@ -88,8 +88,7 @@ export default function Sidebar(props) {
             <Text fontSize='xl'>{category.label}</Text>
           </Flex>
         )}
-        //Sets the food to the label only for display
-        onChange={(food) => props.setFood(food.label)}
+        onChange={(food) => props.setFood(food.value)}
       />
       {getBtnText()}
       <div className='sidebar-bottom'>
