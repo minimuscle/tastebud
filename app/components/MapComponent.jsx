@@ -20,16 +20,16 @@ import {
   StackDivider,
   Heading,
 } from '@chakra-ui/react'
-import ngeohash from 'ngeohash'
+import geohash from 'ngeohash'
 import NewLocation from '~/components/NewLocation'
 
 export default function MapComponent(props) {
   const mapContainer = useRef(null)
   const map = useRef(null)
-  const [lng, setLng] = useState(144.96)
-  const [lat, setLat] = useState(-37.82)
+  const [lng, setLng] = useState(144.9638)
+  const [lat, setLat] = useState(-37.8148)
   const [food, setFood] = useState('')
-  const [zoom, setZoom] = useState(13)
+  const [zoom, setZoom] = useState(15)
   const [marker, addMarker] = useState([])
   const [chosen, setChosen] = useState(null)
   const [searchResults, setSearchResults] = useState([])
@@ -47,7 +47,7 @@ export default function MapComponent(props) {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/streets-v12',
-        center: [pos.coords.longitude, pos.coords.latitude],
+        center: [lng, lat],
         zoom: zoom,
       })
 
@@ -59,9 +59,9 @@ export default function MapComponent(props) {
   useEffect(() => {
     if (!map.current) return // wait for map to initialize
     map.current.on('move', () => {
-      setLng(map.current.getCenter().lng.toFixed(4))
-      setLat(map.current.getCenter().lat.toFixed(4))
-      setZoom(map.current.getZoom().toFixed(2))
+      setLng(map.current.getCenter().lng)
+      setLat(map.current.getCenter().lat)
+      setZoom(map.current.getZoom())
     })
     map.current.on('contextmenu', () => {
       console.log('CLICKED')
@@ -91,18 +91,50 @@ export default function MapComponent(props) {
   })
 
   const search = async () => {
-    console.log('searching')
-    const url = `https://wwi4q03ohh.execute-api.ap-southeast-2.amazonaws.com/${props.STAGE}/get`
-    const data = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-
-      body: JSON.stringify('HELLO FROM MY PROGRAM'),
+    //Removes the markers before re-adding them via this search
+    console.log(marker)
+    marker.forEach((item) => {
+      item.remove()
     })
-    const response = await data.json()
-    console.log(response)
+    //This sets the size of the area to search by using significant figures for the geohash
+    const precision = zoom >= 18 ? 7 : zoom >= 14 ? 6 : 5
+    //! //FIXME: This needs to be dynamic
+    const hash = geohash.encode(lat, lng, 5)
+    console.log('searching ' + hash)
+    try {
+      const url = `https://wwi4q03ohh.execute-api.ap-southeast-2.amazonaws.com/${props.STAGE}/location/get`
+      const data = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ hash: hash }),
+      })
+      const response = await data.json()
+      console.log(response)
+      let locations = []
+      response.forEach((item) => {
+        const latlng = geohash.decode(item.hash)
+        console.log(item)
+        const point = new mapboxgl.Marker()
+          .setLngLat([latlng.longitude, latlng.latitude])
+          .setPopup(
+            new mapboxgl.Popup().setHTML(
+              `<h1>${item.name}</h1><p>${item.address}</p>`
+            )
+          )
+          .addTo(map.current)
+        /*point.getElement().addEventListener('click', () => {
+          window.alert('marker clicked')
+        })*/
+        locations.push(point)
+      })
+      console.log('locations: ')
+      addMarker(marker.concat(locations))
+    } catch (e) {
+      console.log(e)
+    }
+
     /*
 
     //Map locations for the area

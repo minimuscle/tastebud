@@ -1,14 +1,9 @@
-import Select from 'react-select'
-
-export default function CategorySelect({
-  onChange,
-  options,
-  value,
-  className,
-}) {
+export default function CategorySelect() {
+  const value = 'this works'
   return (
-    <div className={className}>
-      <Select value={value} onChange={onChange} options={options}></Select>
+    <div>
+      <h1>Hello</h1>
+      <p>This is a test - {value}</p>
     </div>
   )
 }

@@ -84,10 +84,11 @@ export default function NewLocation(props) {
       )
       setName(props.result.text)
       setId(objectHash.MD5(props.result.center))
-      setHash(geohash.encode(props.result.center[0], props.result.center[1]))
+      setHash(geohash.encode(props.result.center[1], props.result.center[0]))
       console.log(
-        geohash.encode(props.result.center[0], props.result.center[1])
+        geohash.encode(props.result.center[1], props.result.center[0])
       )
+      console.log(props.result.center[0], props.result.center[1])
     }
   }, [props.result, address, hash])
 
