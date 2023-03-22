@@ -119,9 +119,13 @@ export default function MapComponent(props) {
             )
           )
           .addTo(map.current)
-        /*point.getElement().addEventListener('click', () => {
-            window.alert('marker clicked')
-          })*/
+        point.getElement().addEventListener("mouseenter", () => {
+          console.log(point.getElement())
+          point.getElement().style.height = "100px"
+        })
+        point.getElement().addEventListener("mouseleave", () => {
+          point.getElement().style.height = "64px"
+        })
         locations.push(point)
       }
     })
