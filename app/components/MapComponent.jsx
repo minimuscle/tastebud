@@ -97,7 +97,10 @@ export default function MapComponent(props) {
         //   },
         //   body: JSON.stringify({ hash: hashList[i] }),
         // })
-        let { data } = await supabase.from('locations').select('*')
+        let { data } = await supabase
+          .from('locations')
+          .select('*')
+          .like('hash', `${hashList[i]}%`)
         console.log(data)
         const response = data
         responses = [...responses, ...response]
