@@ -25,6 +25,7 @@ import geohash from 'ngeohash'
 import NewLocation from '~/components/NewLocation'
 import LocationPop from '~/components/LocationPop'
 import { createClient } from '@supabase/supabase-js'
+import NewReview from '~/components/NewReview'
 
 export default function MapComponent(props) {
   const mapContainer = useRef(null)
@@ -38,6 +39,13 @@ export default function MapComponent(props) {
   const [searchResults, setSearchResults] = useState([])
   const [results, setResults] = useState(null)
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [address, setAddress] = useState(null)
+  const [locationId, setLocationId] = useState(null)
+  const {
+    isOpen: isReviewOpen,
+    onOpen: toggleModal,
+    onClose: onReviewClose,
+  } = useDisclosure()
   const [locationModal, setLocationModal] = useState(false)
   const supabase = createClient(props.SUPABASE, props.SUPABASE_KEY)
   mapboxgl.accessToken = props.API
@@ -119,18 +127,20 @@ export default function MapComponent(props) {
         const latlng = geohash.decode(item.hash)
         console.log(item)
         const popupNode = document.createElement('React.Fragment')
-        ReactDOM.render(<LocationPop location={item} />, popupNode)
+        ReactDOM.render(
+          <LocationPop
+            location={item}
+            toggleModal={toggleModal}
+            setAddress={setAddress}
+            setLocationId={setLocationId}
+          />,
+          popupNode
+        )
         const point = new mapboxgl.Marker()
           .setLngLat([latlng.longitude, latlng.latitude])
           //The styling here will be temporary - this should probably be a custom popup
           .setPopup(new mapboxgl.Popup().setDOMContent(popupNode))
           .addTo(map.current)
-        point.getElement().addEventListener('click', () => {
-          const popupNode = document.createElement('div')
-          ReactDOM.render(<h1>Hi</h1>, popupNode)
-          console.log(point.getElement())
-          return
-        })
         locations.push(point)
       }
     })
@@ -219,6 +229,13 @@ export default function MapComponent(props) {
   return (
     <div id='map'>
       <div ref={mapContainer} className='map-container' />
+      <NewReview
+        isOpen={isReviewOpen}
+        onClose={onReviewClose}
+        address={address}
+        location_id={locationId}
+        supabase={supabase}
+      />
       <Modal isOpen={isOpen} onClose={closeSearch}>
         <ModalOverlay />
         <ModalContent>
