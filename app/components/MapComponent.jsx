@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from "react"
 import mapboxgl from "mapbox-gl" // eslint-disable-line import/no-webpack-loader-syntax
 import Sidebar from "~/components/Sidebar"
+import ReactDOM from "react-dom"
 import {
   Center,
   Button,
@@ -22,6 +23,7 @@ import {
 } from "@chakra-ui/react"
 import geohash from "ngeohash"
 import NewLocation from "~/components/NewLocation"
+import LocationPop from "~/components/LocationPop"
 
 export default function MapComponent(props) {
   const mapContainer = useRef(null)
@@ -46,7 +48,7 @@ export default function MapComponent(props) {
       setLng(pos.coords.longitude)
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: "mapbox://styles/mapbox/streets-v12",
+        style: "mapbox://styles/mapbox/streets-v12?optimize=true",
         center: [lng, lat],
         zoom: zoom,
       })
@@ -110,21 +112,18 @@ export default function MapComponent(props) {
       if (item.category.includes(food) || food === "all") {
         const latlng = geohash.decode(item.hash)
         console.log(item)
+        const popupNode = document.createElement("React.Fragment")
+        ReactDOM.render(<LocationPop location={item} />, popupNode)
         const point = new mapboxgl.Marker()
           .setLngLat([latlng.longitude, latlng.latitude])
           //The styling here will be temporary - this should probably be a custom popup
-          .setPopup(
-            new mapboxgl.Popup().setHTML(
-              `<h1><b>${item.name}</b></h1><p>${item.address}</p>`
-            )
-          )
+          .setPopup(new mapboxgl.Popup().setDOMContent(popupNode))
           .addTo(map.current)
-        point.getElement().addEventListener("mouseenter", () => {
+        point.getElement().addEventListener("click", () => {
+          const popupNode = document.createElement("div")
+          ReactDOM.render(<h1>Hi</h1>, popupNode)
           console.log(point.getElement())
-          point.getElement().style.height = "100px"
-        })
-        point.getElement().addEventListener("mouseleave", () => {
-          point.getElement().style.height = "64px"
+          return
         })
         locations.push(point)
       }
