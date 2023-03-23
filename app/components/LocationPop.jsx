@@ -1,5 +1,4 @@
-import AppTheme from "./styles/AppTheme"
-
+import AppTheme from '~/styles/AppTheme'
 import {
   Popover,
   PopoverTrigger,
@@ -13,7 +12,7 @@ import {
   Text,
   Heading,
   ChakraProvider,
-} from "@chakra-ui/react"
+} from '@chakra-ui/react'
 
 export default function LocationPop(props) {
   const location = props.location

@@ -104,16 +104,20 @@ export default function NewLocation(props) {
     }
 
     //TODO: Put this in a try/catch loop and catch the exceptions to tell the user
-    const url = `https://wwi4q03ohh.execute-api.ap-southeast-2.amazonaws.com/${props.STAGE}/location/add`
-    const data = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    // const url = `https://wwi4q03ohh.execute-api.ap-southeast-2.amazonaws.com/${props.STAGE}/location/add`
+    // const data = await fetch(url, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
 
-      body: JSON.stringify(body),
-    })
-    const response = await data.json()
+    //   body: JSON.stringify(body),
+    // })
+    const { data } = await props.supabase
+      .from('locations')
+      .upsert(body)
+      .select()
+    const response = await data
     console.log(response)
   }
 

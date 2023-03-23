@@ -2,24 +2,31 @@ import { useLoaderData } from '@remix-run/react'
 import MapComponent from '~/components/MapComponent'
 import styles from '~/styles/index.css'
 import mapboxstyles from 'mapbox-gl/dist/mapbox-gl.css'
+import { createClient } from '@supabase/supabase-js'
 
 export default function Index() {
   const API = useLoaderData()
   return (
     <div>
-      <MapComponent API={API.MAP_API} STAGE={API.STAGE} />
+      <MapComponent
+        API={API.MAP_API}
+        SUPABASE={API.SUPABASE}
+        SUPABASE_KEY={API.SUPABASE_KEY}
+      />
     </div>
   )
 }
 
 export function loader() {
   const MAP_API = process.env.MAPS_ACCESS_TOKEN
-  const STAGE = 'dev'
+  const supabaseUrl = process.env.DATABASE
+  const supabaseKey = process.env.SUPABASE_KEY
 
-  console.log(STAGE)
+  console.log()
   const API = {
     MAP_API: MAP_API,
-    STAGE: STAGE,
+    SUPABASE: supabaseUrl,
+    SUPABASE_KEY: supabaseKey,
   }
   return API
 }

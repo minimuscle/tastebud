@@ -1,7 +1,7 @@
-import { useRef, useEffect, useState } from "react"
-import mapboxgl from "mapbox-gl" // eslint-disable-line import/no-webpack-loader-syntax
-import Sidebar from "~/components/Sidebar"
-import ReactDOM from "react-dom"
+import { useRef, useEffect, useState } from 'react'
+import mapboxgl from 'mapbox-gl' // eslint-disable-line import/no-webpack-loader-syntax
+import Sidebar from '~/components/Sidebar'
+import ReactDOM from 'react-dom'
 import {
   Center,
   Button,
@@ -20,17 +20,18 @@ import {
   VStack,
   StackDivider,
   Heading,
-} from "@chakra-ui/react"
-import geohash from "ngeohash"
-import NewLocation from "~/components/NewLocation"
-import LocationPop from "~/components/LocationPop"
+} from '@chakra-ui/react'
+import geohash from 'ngeohash'
+import NewLocation from '~/components/NewLocation'
+import LocationPop from '~/components/LocationPop'
+import { createClient } from '@supabase/supabase-js'
 
 export default function MapComponent(props) {
   const mapContainer = useRef(null)
   const map = useRef(null)
   const [lng, setLng] = useState(144.9638)
   const [lat, setLat] = useState(-37.8148)
-  const [food, setFood] = useState("")
+  const [food, setFood] = useState('')
   const [zoom, setZoom] = useState(15)
   const [marker, addMarker] = useState([])
   const [chosen, setChosen] = useState(null)
@@ -38,7 +39,7 @@ export default function MapComponent(props) {
   const [results, setResults] = useState(null)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [locationModal, setLocationModal] = useState(false)
-  const [coords, setCoords] = useState({ x: 0, y: 0 })
+  const supabase = createClient(props.SUPABASE, props.SUPABASE_KEY)
   mapboxgl.accessToken = props.API
 
   useEffect(() => {
@@ -48,25 +49,25 @@ export default function MapComponent(props) {
       setLng(pos.coords.longitude)
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: "mapbox://styles/mapbox/streets-v12?optimize=true",
+        style: 'mapbox://styles/mapbox/streets-v12?optimize=true',
         center: [lng, lat],
         zoom: zoom,
       })
 
-      document.addEventListener("DOMContentLoaded", () => map.resize())
+      document.addEventListener('DOMContentLoaded', () => map.resize())
     })
   })
 
   //TODO: This needs to update the sidebar
   useEffect(() => {
     if (!map.current) return // wait for map to initialize
-    map.current.on("move", () => {
+    map.current.on('move', () => {
       setLng(map.current.getCenter().lng)
       setLat(map.current.getCenter().lat)
       setZoom(map.current.getZoom())
     })
-    map.current.on("contextmenu", () => {
-      console.log("CLICKED")
+    map.current.on('contextmenu', () => {
+      console.log('CLICKED')
     })
   })
 
@@ -83,20 +84,22 @@ export default function MapComponent(props) {
     const hash = geohash.encode(lat, lng, 5)
     const hashList = [...geohash.neighbors(hash), hash]
     console.log(hashList)
-    console.log("searching " + hash)
+    console.log('searching ' + hash)
     let responses = []
 
     for (let i = 0; i < hashList.length; i++) {
       try {
-        const url = `https://wwi4q03ohh.execute-api.ap-southeast-2.amazonaws.com/${props.STAGE}/location/get`
-        const data = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ hash: hashList[i] }),
-        })
-        const response = await data.json()
+        // const url = `https://wwi4q03ohh.execute-api.ap-southeast-2.amazonaws.com/${props.STAGE}/location/get`
+        // const data = await fetch(url, {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify({ hash: hashList[i] }),
+        // })
+        let { data } = await supabase.from('locations').select('*')
+        console.log(data)
+        const response = data
         responses = [...responses, ...response]
       } catch (e) {
         console.log(e)
@@ -109,18 +112,18 @@ export default function MapComponent(props) {
     let locations = []
     responses.forEach((item) => {
       console.log(item.category)
-      if (item.category.includes(food) || food === "all") {
+      if (item.category.includes(food) || food === 'all') {
         const latlng = geohash.decode(item.hash)
         console.log(item)
-        const popupNode = document.createElement("React.Fragment")
+        const popupNode = document.createElement('React.Fragment')
         ReactDOM.render(<LocationPop location={item} />, popupNode)
         const point = new mapboxgl.Marker()
           .setLngLat([latlng.longitude, latlng.latitude])
           //The styling here will be temporary - this should probably be a custom popup
           .setPopup(new mapboxgl.Popup().setDOMContent(popupNode))
           .addTo(map.current)
-        point.getElement().addEventListener("click", () => {
-          const popupNode = document.createElement("div")
+        point.getElement().addEventListener('click', () => {
+          const popupNode = document.createElement('div')
           ReactDOM.render(<h1>Hi</h1>, popupNode)
           console.log(point.getElement())
           return
@@ -128,7 +131,7 @@ export default function MapComponent(props) {
         locations.push(point)
       }
     })
-    console.log("locations: ")
+    console.log('locations: ')
     addMarker(marker.concat(locations))
   }
 
@@ -139,7 +142,7 @@ export default function MapComponent(props) {
           return (
             <Box
               key={key}
-              _hover={{ background: "gray.200" }}
+              _hover={{ background: 'gray.200' }}
               p='2'
               borderRadius='7.5px'
               as='button'
@@ -153,14 +156,14 @@ export default function MapComponent(props) {
                 {item.text}
               </Heading>
               <Text color='gray.500' align='left'>
-                {item.properties.address}, {item.context[1].text},{" "}
+                {item.properties.address}, {item.context[1].text},{' '}
                 {item.context[3].text}, {item.context[4].text}
               </Text>
             </Box>
           )
         })}
         <Box
-          _hover={{ background: "gray.200" }}
+          _hover={{ background: 'gray.200' }}
           p='2'
           borderRadius='7.5px'
           as='button'
@@ -243,7 +246,7 @@ export default function MapComponent(props) {
         isOpen={locationModal}
         onClose={() => setLocationModal(false)}
         result={chosen}
-        STAGE={props.STAGE}
+        supabase={supabase}
       />
 
       <Sidebar
@@ -260,7 +263,7 @@ export default function MapComponent(props) {
           hidden={!food}
           className='clickable'
         >
-          Search Area For {food.slice(-1) === "s" ? food : `${food}s`}
+          Search Area For {food.slice(-1) === 's' ? food : `${food}s`}
         </Button>
       </Center>
     </div>
