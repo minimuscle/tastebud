@@ -9,9 +9,11 @@ import {
   Center,
 } from '@chakra-ui/react'
 import { useState } from 'react'
+import { useNavigate } from '@remix-run/react'
 
 export default function Sidebar(props) {
   const [category, setCategory] = useState('')
+  const navigate = useNavigate()
   const getBtnText = () => {
     if (!category)
       return (
@@ -72,7 +74,11 @@ export default function Sidebar(props) {
           </Heading>
         </Center>
         <br />
-        <Button colorScheme="green" width="100%" onClick={props.addLocation}>
+        <Button
+          colorScheme="green"
+          width="100%"
+          onClick={() => navigate('./add')}
+        >
           Add Location
         </Button>
       </div>

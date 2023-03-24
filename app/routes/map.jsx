@@ -5,7 +5,7 @@ import mapboxstyles from 'mapbox-gl/dist/mapbox-gl.css'
 import mapboxgl from 'mapbox-gl' // eslint-disable-line import/no-webpack-loader-syntax
 import { createClient } from '@supabase/supabase-js'
 import Sidebar from '~/components/map/Sidebar'
-import AddLocationModal from '~/components/map/AddLocationModal'
+import AddLocationModal from '~/routes/map/add'
 import { useDisclosure } from '@chakra-ui/react'
 
 export default function Map() {
@@ -17,11 +17,6 @@ export default function Map() {
     lng: -37.8148,
     zoom: 15,
   })
-  const {
-    isOpen: isLocationModalOpen,
-    onOpen: onLocationModalOpen,
-    onClose: onLocationModalClose,
-  } = useDisclosure()
 
   //Intialize the map
   useEffect(() => {
@@ -51,15 +46,7 @@ export default function Map() {
   return (
     <div id="map">
       <div ref={mapContainer} className="map-container" />
-      <Sidebar
-        categories={data.categories}
-        search={search}
-        addLocation={onLocationModalOpen}
-      />
-      <AddLocationModal
-        isOpen={isLocationModalOpen}
-        onClose={onLocationModalClose}
-      />
+      <Sidebar categories={data.categories} search={search} />
       {/* This code below is for adding items on top of the map, it is not needed now but left here to remind how to do so
       <Center id='overlay' className='map-area'>
       </Center>
