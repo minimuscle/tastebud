@@ -17,6 +17,7 @@ import {
   Text,
   ModalFooter,
   Textarea,
+  toast,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import Select from 'react-select'
@@ -77,25 +78,34 @@ export default function NewReview(props) {
       .insert(body)
       .select()
     if (error) console.log(error)
+    if (data) {
+      toast({
+        title: 'Account created.',
+        description: "We've created your account for you.",
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      })
+    }
     const response = await data
     console.log(response)
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size='xl'>
+    <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Add a new review!</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <form onSubmit={handleSubmit} action='POST'>
-            <VStack spacing={4} align='flex-start'>
+          <form onSubmit={handleSubmit} action="POST">
+            <VStack spacing={4} align="flex-start">
               <FormControl>
                 <FormLabel>Address</FormLabel>
                 <Input
-                  id='address'
-                  name='address'
-                  variant='filled'
+                  id="address"
+                  name="address"
+                  variant="filled"
                   isDisabled
                   value={address}
                 />
@@ -106,14 +116,14 @@ export default function NewReview(props) {
                   Select the category that you want to review
                 </FormHelperText>
                 <Select
-                  instanceId='1'
-                  placeholder='Select A Food Category...'
-                  className='select'
+                  instanceId="1"
+                  placeholder="Select A Food Category..."
+                  className="select"
                   options={options}
                   formatOptionLabel={(category) => (
                     <Flex>
-                      <Image src={category.image} alt='category' />
-                      <Text fontSize='xl'>{category.label}</Text>
+                      <Image src={category.image} alt="category" />
+                      <Text fontSize="xl">{category.label}</Text>
                     </Flex>
                   )}
                   onChange={(food) => setCategory(food.value)}
@@ -125,8 +135,8 @@ export default function NewReview(props) {
                   initialRating={rating}
                   onChange={(e) => setRating(e)}
                   fractions={2}
-                  emptySymbol={<BsStarFill size='30px' color='#d6d6d6' />}
-                  fullSymbol={<BsStarFill size='30px' color='#ffd500' />}
+                  emptySymbol={<BsStarFill size="30px" color="#d6d6d6" />}
+                  fullSymbol={<BsStarFill size="30px" color="#ffd500" />}
                 />
                 <Text>{rating}/5 Stars</Text>
               </FormControl>
@@ -137,8 +147,8 @@ export default function NewReview(props) {
                   later)
                 </FormHelperText>
                 <Input
-                  id='name'
-                  name='name'
+                  id="name"
+                  name="name"
                   onChange={(e) => setName(e.target.value)}
                   value={name}
                 />
@@ -146,8 +156,8 @@ export default function NewReview(props) {
               <FormControl>
                 <FormLabel>Title (Optional)</FormLabel>
                 <Input
-                  id='heading'
-                  name='heading'
+                  id="heading"
+                  name="heading"
                   onChange={(e) => setHeading(e.target.value)}
                   value={heading}
                 />
@@ -155,13 +165,13 @@ export default function NewReview(props) {
               <FormControl>
                 <FormLabel>Comment (Optional)</FormLabel>
                 <Textarea
-                  id='comment'
-                  name='comment'
+                  id="comment"
+                  name="comment"
                   onChange={(e) => setComment(e.target.value)}
                   value={comment}
                 />
               </FormControl>
-              <Button mt={4} colorScheme='teal' type='submit' width='100%'>
+              <Button mt={4} colorScheme="teal" type="submit" width="100%">
                 Submit Review
               </Button>
             </VStack>
