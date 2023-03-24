@@ -1,5 +1,10 @@
+const { getDependenciesToBundle } = require("@remix-run/dev");
+
 /** @type {import('@remix-run/dev').AppConfig} */
 module.exports = {
+  future: {
+    v2_routeConvention: true,
+  },
   ignoredRouteFiles: ["**/.*"],
   // When running locally in development mode, we use the built-in remix
   // server. This does not understand the vercel lambda module format,
@@ -9,4 +14,9 @@ module.exports = {
   // appDirectory: "app",
   // assetsBuildDirectory: "public/build",
   // publicPath: "/build/",
+  serverDependenciesToBundle: [
+    ...getDependenciesToBundle(
+      "mapbox-gl",
+    )
+  ],
 };

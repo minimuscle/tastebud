@@ -79,7 +79,7 @@ export default function Sidebar(props) {
     >
       <Flex minWidth="max-content" alignItems="center" gap="2">
         <Heading as="h1">TasteBud</Heading>
-        <Text alignSelf="flex-end">v0.1.0</Text>
+        <Text alignSelf="flex-end">v0.2.0</Text>
       </Flex>
 
       <Select
