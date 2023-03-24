@@ -1,32 +1,42 @@
+import { useLoaderData } from '@remix-run/react'
+import MapComponent from '~/components/MapComponent'
+import styles from '~/styles/index.css'
+import mapboxstyles from 'mapbox-gl/dist/mapbox-gl.css'
+import { createClient } from '@supabase/supabase-js'
+
 export default function Index() {
+  const API = useLoaderData()
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
-      <h1>Welcome to Remix</h1>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
+    <div>
+      <MapComponent
+        API={API.MAP_API}
+        SUPABASE={API.SUPABASE}
+        SUPABASE_KEY={API.SUPABASE_KEY}
+      />
     </div>
-  );
+  )
+}
+
+export function loader() {
+  const MAP_API = process.env.MAPS_ACCESS_TOKEN
+  const supabaseUrl = process.env.DATABASE
+  const supabaseKey = process.env.SUPABASE_KEY
+
+  console.log()
+  const API = {
+    MAP_API: MAP_API,
+    SUPABASE: supabaseUrl,
+    SUPABASE_KEY: supabaseKey,
+  }
+  return API
+}
+
+export function links() {
+  return [
+    { rel: 'stylesheet', href: styles },
+    {
+      rel: 'stylesheet',
+      href: mapboxstyles,
+    },
+  ]
 }
