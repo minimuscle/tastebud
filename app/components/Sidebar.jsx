@@ -8,6 +8,7 @@ import {
   Button,
   Spacer,
   Center,
+  HStack,
 } from '@chakra-ui/react'
 
 //TODO: This should probably be grabbed via some smart display not hard coded - from a dynamoDB table for sure
@@ -45,9 +46,9 @@ export default function Sidebar(props) {
       return (
         <Button
           isDisabled
-          colorScheme='blue'
-          width='100%'
-          className='searchBtn'
+          colorScheme="blue"
+          width="100%"
+          className="searchBtn"
         >
           Search Area
         </Button>
@@ -55,9 +56,9 @@ export default function Sidebar(props) {
 
     return (
       <Button
-        colorScheme='blue'
-        width='100%'
-        className='searchBtn'
+        colorScheme="blue"
+        width="100%"
+        className="searchBtn"
         onClick={props.search}
       >
         Search Area For{' '}
@@ -70,36 +71,40 @@ export default function Sidebar(props) {
 
   return (
     <Container
-      bg='white'
-      maxW='500px'
-      minW='500px'
-      id='overlay'
-      className='sidebar'
+      bg="white"
+      maxW="500px"
+      minW="500px"
+      id="overlay"
+      className="sidebar"
     >
-      <Heading as='h1'>TasteBud</Heading>
+      <Flex minWidth="max-content" alignItems="center" gap="2">
+        <Heading as="h1">TasteBud</Heading>
+        <Text alignSelf="flex-end">v0.1.0</Text>
+      </Flex>
+
       <Select
-        instanceId='1'
-        placeholder='Select A Food Category...'
-        className='category-select'
+        instanceId="1"
+        placeholder="Select A Food Category..."
+        className="category-select"
         options={options}
         formatOptionLabel={(category) => (
           <Flex>
-            <Image src={category.image} alt='category' />
-            <Text fontSize='xl'>{category.label}</Text>
+            <Image src={category.image} alt="category" />
+            <Text fontSize="xl">{category.label}</Text>
           </Flex>
         )}
         onChange={(food) => props.setFood(food.value)}
       />
       {getBtnText()}
-      <div className='sidebar-bottom'>
+      <div className="sidebar-bottom">
         <Center>
-          <Heading as='h4' size='md'>
+          <Heading as="h4" size="md">
             Can't find what you're looking for?
           </Heading>
         </Center>
 
         <br />
-        <Button colorScheme='green' width='100%' onClick={props.addLocation}>
+        <Button colorScheme="green" width="100%" onClick={props.addLocation}>
           Add Location
         </Button>
       </div>
