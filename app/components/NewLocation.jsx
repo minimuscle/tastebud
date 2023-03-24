@@ -14,6 +14,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  useToast,
   VStack,
 } from '@chakra-ui/react'
 import geohash from 'ngeohash'
@@ -56,6 +57,7 @@ export default function NewLocation(props) {
   const [id, setId] = useState()
   const [hash, setHash] = useState()
   const [name, setName] = useState('')
+  const toast = useToast()
   let errors = {
     name: {
       error: false,
@@ -118,6 +120,17 @@ export default function NewLocation(props) {
       .upsert(body)
       .select()
     const response = await data
+    //TODO: Don't allow user ability to anon update location if it already esists.
+    if (data) {
+      toast({
+        title: 'Location created.',
+        description: 'Your Location has been successfully added',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      })
+      props.onClose()
+    }
     console.log(response)
   }
 
@@ -125,20 +138,20 @@ export default function NewLocation(props) {
   //TODO: Send these values to the dynamoDB database.
 
   return (
-    <Modal isOpen={props.isOpen} onClose={props.onClose} size='xl'>
+    <Modal isOpen={props.isOpen} onClose={props.onClose} size="xl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Add a new location!</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <form onSubmit={handleSubmit} action='POST'>
-            <VStack spacing={4} align='flex-start'>
+          <form onSubmit={handleSubmit} action="POST">
+            <VStack spacing={4} align="flex-start">
               <FormControl>
                 <FormLabel>Location Name</FormLabel>
                 <Input
-                  id='name'
-                  name='name'
-                  variant='filled'
+                  id="name"
+                  name="name"
+                  variant="filled"
                   onChange={(e) => setName(e.target.value)}
                   value={name}
                 />
@@ -147,9 +160,9 @@ export default function NewLocation(props) {
               <FormControl>
                 <FormLabel>Address</FormLabel>
                 <Input
-                  id='address'
-                  name='address'
-                  variant='filled'
+                  id="address"
+                  name="address"
+                  variant="filled"
                   isDisabled={disabled}
                   onChange={(e) => setAddress(e.target.value)}
                   value={address}
@@ -159,10 +172,10 @@ export default function NewLocation(props) {
               <FormControl>
                 <FormLabel>Food Types Sold</FormLabel>
                 <Select
-                  instanceId='2'
-                  id='category'
-                  name='category'
-                  placeholder='Select A Food Category...'
+                  instanceId="2"
+                  id="category"
+                  name="category"
+                  placeholder="Select A Food Category..."
                   isMulti
                   options={options}
                   onChange={(e) => {
@@ -176,7 +189,7 @@ export default function NewLocation(props) {
                 <FormErrorMessage>{errors.category.message}</FormErrorMessage>
                 <FormHelperText>Choose at least 1 category.</FormHelperText>
               </FormControl>
-              <Button mt={4} colorScheme='teal' type='submit' width='100%'>
+              <Button mt={4} colorScheme="teal" type="submit" width="100%">
                 Submit Location
               </Button>
             </VStack>

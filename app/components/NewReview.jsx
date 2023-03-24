@@ -17,7 +17,7 @@ import {
   Text,
   ModalFooter,
   Textarea,
-  toast,
+  useToast,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import Select from 'react-select'
@@ -59,6 +59,7 @@ export default function NewReview(props) {
   const [comment, setComment] = useState('')
   const [rating, setRating] = useState(0)
   const [category, setCategory] = useState()
+  const toast = useToast()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -80,12 +81,13 @@ export default function NewReview(props) {
     if (error) console.log(error)
     if (data) {
       toast({
-        title: 'Account created.',
-        description: "We've created your account for you.",
+        title: 'Review created.',
+        description: 'Your Review has been successfully added',
         status: 'success',
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       })
+      onClose()
     }
     const response = await data
     console.log(response)
