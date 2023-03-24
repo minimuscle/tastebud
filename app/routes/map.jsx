@@ -7,7 +7,7 @@ import Sidebar from '~/components/map/Sidebar'
 import { useEffect, useRef, useState } from 'react'
 
 export default function Map() {
-  const API = useLoaderData()
+  const data = useLoaderData()
   const mapContainer = useRef(null)
   const map = useRef(null)
   const [coords, setCoords] = useState({
@@ -15,12 +15,12 @@ export default function Map() {
     lng: -37.8148,
     zoom: 15,
   })
-  mapboxgl.accessToken = API
 
   //Intialize the map
   useEffect(() => {
     //Initialize map only once.
     if (!map.current) {
+      mapboxgl.accessToken = data.MAP_API
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/streets-v12?optimize=true',
@@ -36,17 +36,13 @@ export default function Map() {
         zoom: map.current.getZoom(),
       })
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <div id="map">
       <div ref={mapContainer} className="map-container" />
-      {/*<Sidebar
-        food={food}
-        setFood={setFood}
-        search={search}
-        addLocation={onOpen}
-      />*/}
+      <Sidebar categories={data.categories} />
       {/* This code below is for adding items on top of the map, it is not needed now but left here to remind how to do so
       <Center id='overlay' className='map-area'>
       </Center>
@@ -64,18 +60,18 @@ export default function Map() {
   )
 }
 
-export function loader() {
+export async function loader() {
   const MAP_API = process.env.MAPS_ACCESS_TOKEN
+  const supabase = createClient(process.env.DATABASE, process.env.SUPABASE_KEY)
+  const categories = await supabase.from('categories').select()
   // const supabaseUrl = process.env.DATABASE
   // const supabaseKey = process.env.SUPABASE_KEY
   // console.log()
-  // const API = {
-  //   MAP_API: MAP_API,
-  //   SUPABASE: supabaseUrl,
-  //   SUPABASE_KEY: supabaseKey,
-  // }
-  // return API
-  return MAP_API
+  const data = {
+    MAP_API: MAP_API,
+    categories: categories.data,
+  }
+  return data
 }
 
 export function links() {

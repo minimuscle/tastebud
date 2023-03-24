@@ -22,18 +22,13 @@ h6 {
   font-family: 'Raleway', sans-serif !important;
 }
 
-#overlay {
-  position: absolute;
-  width: 100%;
-}
-
 .clickable {
   pointer-events: all;
 }
 
 .sidebar {
+  position: absolute;
   margin: 25px !important;
-  height: calc(100vh - 55px);
   border-radius: var(--default-border-radius);
 }
 

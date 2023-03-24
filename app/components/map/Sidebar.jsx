@@ -6,43 +6,15 @@ import {
   Image,
   Text,
   Button,
-  Spacer,
   Center,
-  HStack,
 } from '@chakra-ui/react'
-
-//TODO: This should probably be grabbed via some smart display not hard coded - from a dynamoDB table for sure
-const options = [
-  {
-    value: 'all',
-    label: 'All',
-    image: '/icons/infinity.svg',
-  },
-  {
-    value: 'burger',
-    label: 'Burger',
-    image: '/icons/hamburger.svg',
-  },
-  {
-    value: 'milkshake',
-    label: 'Milkshake',
-    image: '/icons/milkshake.svg',
-  },
-  {
-    value: 'fries',
-    label: 'Fries',
-    image: '/icons/fries.svg',
-  },
-  {
-    value: 'hotchocolate',
-    label: 'Hot Chocolate',
-    image: '/icons/hotchocolate.svg',
-  },
-]
+import { useState } from 'react'
 
 export default function Sidebar(props) {
+  const [category, setCategory] = useState('')
   const getBtnText = () => {
-    if (!props.food)
+    console.log(props.categories)
+    if (!category)
       return (
         <Button
           isDisabled
@@ -50,7 +22,7 @@ export default function Sidebar(props) {
           width="100%"
           className="searchBtn"
         >
-          Search Area
+          Search area
         </Button>
       )
 
@@ -61,10 +33,10 @@ export default function Sidebar(props) {
         className="searchBtn"
         onClick={props.search}
       >
-        Search Area For{' '}
-        {props.food.slice(-1) === 's' || props.food === 'All'
-          ? props.food
-          : `${props.food}s`}
+        Search area for{' '}
+        {category.slice(-1) === 's' || category === 'all'
+          ? category
+          : `${category}s`}
       </Button>
     )
   }
@@ -72,28 +44,26 @@ export default function Sidebar(props) {
   return (
     <Container
       bg="white"
-      maxW="500px"
-      minW="500px"
-      id="overlay"
       className="sidebar"
+      minH="calc(100vh - 55px)"
+      maxW="500px"
     >
-      <Flex minWidth="max-content" alignItems="center" gap="2">
-        <Heading as="h1">TasteBud</Heading>
+      <Heading as="h1">TasteBud</Heading>
+      <Center>
         <Text alignSelf="flex-end">v0.2.0</Text>
-      </Flex>
+      </Center>
 
       <Select
-        instanceId="1"
         placeholder="Select A Food Category..."
         className="category-select"
-        options={options}
+        options={props.categories}
         formatOptionLabel={(category) => (
           <Flex>
             <Image src={category.image} alt="category" />
             <Text fontSize="xl">{category.label}</Text>
           </Flex>
         )}
-        onChange={(food) => props.setFood(food.value)}
+        onChange={(e) => setCategory(e.value)}
       />
       {getBtnText()}
       <div className="sidebar-bottom">
@@ -102,7 +72,6 @@ export default function Sidebar(props) {
             Can't find what you're looking for?
           </Heading>
         </Center>
-
         <br />
         <Button colorScheme="green" width="100%" onClick={props.addLocation}>
           Add Location
