@@ -1,10 +1,12 @@
 import { Outlet, useLoaderData } from '@remix-run/react'
+import { useEffect, useRef, useState } from 'react'
 import styles from '~/styles/index.css'
 import mapboxstyles from 'mapbox-gl/dist/mapbox-gl.css'
 import mapboxgl from 'mapbox-gl' // eslint-disable-line import/no-webpack-loader-syntax
 import { createClient } from '@supabase/supabase-js'
 import Sidebar from '~/components/map/Sidebar'
-import { useEffect, useRef, useState } from 'react'
+import AddLocationModal from '~/components/map/AddLocationModal'
+import { useDisclosure } from '@chakra-ui/react'
 
 export default function Map() {
   const data = useLoaderData()
@@ -15,6 +17,11 @@ export default function Map() {
     lng: -37.8148,
     zoom: 15,
   })
+  const {
+    isOpen: isLocationModalOpen,
+    onOpen: onLocationModalOpen,
+    onClose: onLocationModalClose,
+  } = useDisclosure()
 
   //Intialize the map
   useEffect(() => {
@@ -39,22 +46,24 @@ export default function Map() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const search = () => {}
+
   return (
     <div id="map">
       <div ref={mapContainer} className="map-container" />
-      <Sidebar categories={data.categories} />
+      <Sidebar
+        categories={data.categories}
+        search={search}
+        addLocation={onLocationModalOpen}
+      />
+      <AddLocationModal
+        isOpen={isLocationModalOpen}
+        onClose={onLocationModalClose}
+      />
       {/* This code below is for adding items on top of the map, it is not needed now but left here to remind how to do so
       <Center id='overlay' className='map-area'>
       </Center>
       */}
-      {/*<div>
-      <h2>map</h2>
-       <MapComponent
-        API={API.MAP_API}
-        SUPABASE={API.SUPABASE}
-        SUPABASE_KEY={API.SUPABASE_KEY}
-      /> 
-    </div>*/}
       <Outlet />
     </div>
   )
@@ -64,9 +73,6 @@ export async function loader() {
   const MAP_API = process.env.MAPS_ACCESS_TOKEN
   const supabase = createClient(process.env.DATABASE, process.env.SUPABASE_KEY)
   const categories = await supabase.from('categories').select()
-  // const supabaseUrl = process.env.DATABASE
-  // const supabaseKey = process.env.SUPABASE_KEY
-  // console.log()
   const data = {
     MAP_API: MAP_API,
     categories: categories.data,

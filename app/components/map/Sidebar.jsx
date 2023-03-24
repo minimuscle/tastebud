@@ -13,7 +13,6 @@ import { useState } from 'react'
 export default function Sidebar(props) {
   const [category, setCategory] = useState('')
   const getBtnText = () => {
-    console.log(props.categories)
     if (!category)
       return (
         <Button
