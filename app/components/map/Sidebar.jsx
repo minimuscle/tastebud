@@ -77,7 +77,9 @@ export default function Sidebar(props) {
         <Button
           colorScheme="green"
           width="100%"
-          onClick={() => navigate('./add')}
+          onClick={() =>
+            navigate(`./add/${props.coords.lat},${props.coords.lng}`)
+          }
         >
           Add Location
         </Button>

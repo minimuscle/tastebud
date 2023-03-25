@@ -42,6 +42,10 @@ h6 {
   padding-top: 20px;
 }
 
+.sidebar p {
+  margin-bottom: 50px;
+}
+
 .sidebar-bottom {
   position: inherit;
   bottom: 0;
@@ -89,10 +93,6 @@ h6 {
   right: 0;
 }
 
-.category-select {
-  margin-top: 50px;
-}
-
 .category-select img {
   width: 30px;
   height: 30px;
@@ -126,4 +126,8 @@ h6 {
 .rating img {
   width: 30px;
   height: 30px;
+}
+
+.link {
+  color: teal;
 }
