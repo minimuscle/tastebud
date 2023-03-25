@@ -1,4 +1,5 @@
-import { Outlet, useFetcher, useLoaderData, useSubmit } from '@remix-run/react'
+import { Outlet, useLoaderData } from '@remix-run/react'
+import * as ReactDOMClient from 'react-dom/client'
 import { useEffect, useRef, useState } from 'react'
 import styles from '~/styles/index.css'
 import mapboxstyles from 'mapbox-gl/dist/mapbox-gl.css'
@@ -18,6 +19,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
+import LocationPop from '~/components/map/LocationPop'
 
 export default function Map() {
   const data = useLoaderData()
@@ -30,7 +32,7 @@ export default function Map() {
   })
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [marker, addMarker] = useState([])
-  const fetcher = useFetcher()
+  const locations = useRef()
 
   //Intialize the map
   useEffect(() => {
@@ -57,25 +59,48 @@ export default function Map() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const search = (category) => {
-    console.log(marker)
+  //Set the markers
+  useEffect(() => {
+    if (!locations.current) return
     marker.forEach((item) => {
       item.remove()
     })
+    let locationsList = []
+    locations.current.forEach((item) => {
+      const latlng = geohash.decode(item.hash)
+      const popupNode = document.createElement('React.Fragment')
+      const root = ReactDOMClient.createRoot(popupNode)
+      root.render(
+        <LocationPop
+          location={item}
+          // toggleModal={toggleModal}
+          // setAddress={setAddress}
+          // setLocationId={setLocationId}
+        />
+      )
+      const point = new mapboxgl.Marker()
+        .setLngLat([latlng.longitude, latlng.latitude])
+        //The styling here will be temporary - this should probably be a custom popup
+        .setPopup(new mapboxgl.Popup().setDOMContent(popupNode))
+        .addTo(map.current)
+      locationsList.push(point)
 
-    const hash = geohash.encode(coords.lng, coords.lat, 5)
-    const hashList = [hash, ...geohash.neighbors(hash)]
-    console.log('searching ' + hash)
-    fetcher.submit({ hashList: hashList }, { method: 'post' })
-  }
+      point.getElement().addEventListener('mouseenter', (event) => {
+        point.togglePopup()
+      })
+    })
+    addMarker(marker.concat(locationsList))
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locations.current])
 
   return (
     <div id="map">
       <div ref={mapContainer} className="map-container" />
       <Sidebar
         categories={data.categories}
-        search={() => search}
         coords={coords}
+        locations={locations}
       />
       <Outlet />
 
@@ -112,25 +137,57 @@ export default function Map() {
 
 export async function action({ request }) {
   const body = await request.formData()
-  const hashList = body.get('hashList')
-  console.log(hashList)
-  const supabase = createClient(process.env.DATABASE, process.env.SUPABASE_KEY)
-  // let responses = []
+  const [lat, lng] = body.get('coords').split(',')
+  const category = body.get('category')
 
-  //   for (let i = 0; i < hashList.length; i++) {
-  //     try {
-  //       let { data } = await supabase
-  //         .from('locations')
-  //         .select('*')
-  //         .like('hash', `${hashList[i]}%`)
-  //       console.log(data)
-  //       const response = data
-  //       responses = [...responses, ...response]
-  //     } catch (e) {
-  //       console.log(e)
-  //     }
-  //   }
-  return null
+  const hash = geohash.encode(lat, lng, 5)
+  const hashList = [hash, ...geohash.neighbors(hash)]
+  const supabase = createClient(process.env.DATABASE, process.env.SUPABASE_KEY)
+  let responses = []
+
+  for (let i = 0; i < hashList.length; i++) {
+    try {
+      let { data } = await supabase
+        .from('locations')
+        .select('*')
+        .like('hash', `${hashList[i]}%`)
+        .like('category', `%${category}%`)
+        .limit(50)
+      const response = data
+      responses = [...responses, ...response]
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  console.log(responses)
+
+  responses.forEach(async (location) => {
+    console.log(location.id)
+    try {
+      let { count } = await supabase
+        .from('reviews')
+        .select('*', { count: 'exact', head: true })
+        .eq('location_id', `${location.id}`)
+      const response = count
+      console.log('number of reivews: ' + response)
+      //responses = [...responses, ...response]
+    } catch (e) {
+      console.log(e)
+    }
+    try {
+      let { data } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('location_id', `${location.id}`)
+      const response = data
+      console.log('number of reivews: ' + response)
+      //responses = [...responses, ...response]
+    } catch (e) {
+      console.log(e)
+    }
+  })
+
+  return responses
 }
 
 export async function loader() {

@@ -8,12 +8,18 @@ import {
   Button,
   Center,
 } from '@chakra-ui/react'
-import { useState } from 'react'
-import { useNavigate } from '@remix-run/react'
+import { useEffect, useState } from 'react'
+import { useFetcher, useNavigate } from '@remix-run/react'
 
 export default function Sidebar(props) {
   const [category, setCategory] = useState({ value: '', label: '' })
   const navigate = useNavigate()
+  const fetcher = useFetcher()
+
+  useEffect(() => {
+    props.locations.current = fetcher.data
+  }, [fetcher, props.locations])
+
   const getBtnText = () => {
     if (!category.value)
       return (
@@ -28,17 +34,29 @@ export default function Sidebar(props) {
       )
 
     return (
-      <Button
-        colorScheme="blue"
-        width="100%"
-        className="searchBtn"
-        onClick={props.search(category.value)}
-      >
-        Search Area For{' '}
-        {category.label.slice(-1) === 's' || category.label === 'all'
-          ? category.label
-          : `${category.label}s`}
-      </Button>
+      <fetcher.Form method="post">
+        <input
+          type="hidden"
+          name="coords"
+          value={[props.coords.lng, props.coords.lat]}
+        />
+        <Button
+          colorScheme="blue"
+          width="100%"
+          className="searchBtn"
+          name="category"
+          value={category.value}
+          type="submit"
+          /*onClick={() => {
+            props.search()
+          }}*/
+        >
+          Search Area For{' '}
+          {category.label.slice(-1) === 's' || category.label === 'all'
+            ? category.label
+            : `${category.label}s`}
+        </Button>
+      </fetcher.Form>
     )
   }
 
