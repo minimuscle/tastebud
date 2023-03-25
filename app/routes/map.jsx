@@ -5,8 +5,18 @@ import mapboxstyles from 'mapbox-gl/dist/mapbox-gl.css'
 import mapboxgl from 'mapbox-gl' // eslint-disable-line import/no-webpack-loader-syntax
 import { createClient } from '@supabase/supabase-js'
 import Sidebar from '~/components/map/Sidebar'
-import AddLocationModal from '~/routes/map/add'
-import { useDisclosure } from '@chakra-ui/react'
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react'
 
 export default function Map() {
   const data = useLoaderData()
@@ -17,9 +27,11 @@ export default function Map() {
     lng: -37.8148,
     zoom: 15,
   })
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   //Intialize the map
   useEffect(() => {
+    onOpen()
     //Initialize map only once.
     if (!map.current) {
       mapboxgl.accessToken = data.MAP_API
@@ -46,12 +58,36 @@ export default function Map() {
   return (
     <div id="map">
       <div ref={mapContainer} className="map-container" />
-      <Sidebar categories={data.categories} search={search} />
-      {/* This code below is for adding items on top of the map, it is not needed now but left here to remind how to do so
-      <Center id='overlay' className='map-area'>
-      </Center>
-      */}
+      <Sidebar categories={data.categories} search={search} coords={coords} />
       <Outlet />
+
+      {/* This is only for the now. This should not stay here forever */}
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Attention</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>
+              This is an early-access version of TasteBud. <br /> You may find
+              many issues, or lack of feedback. <br />
+              <br /> Forms may not work, or might not tell you they are. <br />
+              <br /> Please submit any issues to:{' '}
+              <a
+                className="link"
+                href="https://github.com/minimuscle/tastebud/issues"
+                target="_blank"
+                rel="noreferrer"
+              >
+                GitHub Issues
+              </a>
+            </Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={onClose}>Ok</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   )
 }
