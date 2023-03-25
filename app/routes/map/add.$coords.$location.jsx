@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Select from 'react-select'
 import {
   Button,
@@ -25,7 +25,8 @@ import geohash from 'ngeohash'
 import objectHash from 'object-hash'
 import { createClient } from '@supabase/supabase-js'
 import * as yup from 'yup'
-import { useLoaderData } from '@remix-run/react'
+import { useActionData, useLoaderData } from '@remix-run/react'
+import { redirect } from '@remix-run/node'
 
 export default function NewLocation() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -37,55 +38,36 @@ export default function NewLocation() {
   const [name, setName] = useState('')
   const toast = useToast()
   const loader = useLoaderData()
+  const data = useActionData()
+  const isToast = useRef()
 
   useEffect(() => {
     onOpen()
-    // if (props.result) {
-    //   setDisabled(true)
-    //   //Gets the address in a good format rather than using props.result.place_name which includes other data not strictly correct
-    //   setAddress(
-    //     `${props.result.properties.address}, ${
-    //       props.result.context[1].text
-    //     },${' '}${props.result.context[3].text}, ${
-    //       props.result.context[4].text
-    //     }`
-    //   )
-    //   setName(props.result.text)
-    //   setId(objectHash.MD5(props.result.center))
-    //   setHash(geohash.encode(props.result.center[1], props.result.center[0]))
-    //   console.log(
-    //     geohash.encode(props.result.center[1], props.result.center[0])
-    //   )
-    //   console.log(props.result.center[0], props.result.center[1])
-    // }
   }, [])
 
+  useEffect(() => {
+    if (loader.address) {
+      setDisabled(true)
+      setAddress(loader.address)
+      setName(loader.name)
+      setId(objectHash.MD5(loader.coords.toString()))
+      setHash(geohash.encode(loader.coords[1], loader.coords[0]))
+
+      if (isToast.current !== data) {
+        isToast.current = data
+        toast({
+          title: 'Location created.',
+          description: 'Your Location has been successfully added',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        })
+        onClose()
+      }
+    }
+  }, [loader, onClose, isToast, data, toast])
+
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    // console.log(id, name, address, category, hash)
-    // const body = {
-    //   id,
-    //   name,
-    //   address,
-    //   category,
-    //   hash,
-    // }
-
-    // //TODO: Put this in a try/catch loop and catch the exceptions to tell the user
-    // // const url = `https://wwi4q03ohh.execute-api.ap-southeast-2.amazonaws.com/${props.STAGE}/location/add`
-    // // const data = await fetch(url, {
-    // //   method: 'POST',
-    // //   headers: {
-    // //     'Content-Type': 'application/json',
-    // //   },
-
-    // //   body: JSON.stringify(body),
-    // // })
-    // const { data } = await props.supabase
-    //   .from('locations')
-    //   .upsert(body)
-    //   .select()
-    // const response = await data
     // //TODO: Don't allow user ability to anon update location if it already esists.
     // if (data) {
     //   toast({
@@ -111,14 +93,36 @@ export default function NewLocation() {
           <ModalHeader>Add a new location!</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <form onSubmit={handleSubmit} action="POST">
+            <form method="POST">
               <VStack spacing={4} align="flex-start">
+                <Input id="id" name="id" value={id} display="none" readOnly />
+                <Input
+                  id="address2"
+                  name="address2"
+                  value={address}
+                  display="none"
+                  readOnly
+                />
+                <Input
+                  id="category2"
+                  name="category2"
+                  value={category}
+                  display="none"
+                  readOnly
+                />
+                <Input
+                  id="hash"
+                  name="hash"
+                  value={hash}
+                  display="none"
+                  readOnly
+                />
                 <FormControl>
                   <FormLabel>Location Name</FormLabel>
                   <Input
+                    autoFocus
                     id="name"
                     name="name"
-                    variant="filled"
                     onChange={(e) => setName(e.target.value)}
                     value={name}
                   />
@@ -131,6 +135,7 @@ export default function NewLocation() {
                     variant="filled"
                     isDisabled={disabled}
                     onChange={(e) => setAddress(e.target.value)}
+                    defaultValue={address}
                     value={address}
                   />
                 </FormControl>
@@ -155,7 +160,7 @@ export default function NewLocation() {
                       e.forEach((a) => {
                         x.push(a.value)
                       })
-                      setCategory(x)
+                      setCategory([x])
                     }}
                   />
                   <FormHelperText>Choose at least 1 category.</FormHelperText>
@@ -173,8 +178,30 @@ export default function NewLocation() {
   )
 }
 
+export async function action({ request }) {
+  const body = await request.formData()
+  const id = body.get('id')
+  const name = body.get('name')
+  const address = body.get('address2')
+  console.log(address)
+  const category = body.get('category2')
+  const hash = body.get('hash')
+  const supabase = createClient(process.env.DATABASE, process.env.SUPABASE_KEY)
+  const info = {
+    id,
+    name,
+    address,
+    category,
+    hash,
+  }
+  const { data } = await supabase.from('locations').upsert(info).select()
+  console.log(data)
+  return redirect(`/map/locationSuccess`)
+}
+
 export async function loader({ params }) {
-  const [name, address] = params.location.split('&')
+  const [name, coords_bulk, address] = params.location.split('&')
+  const coords = [...coords_bulk.split(',')]
   const supabase = createClient(process.env.DATABASE, process.env.SUPABASE_KEY)
   const options = await supabase.from('categories').select()
   const categories = options.data
@@ -182,6 +209,7 @@ export async function loader({ params }) {
   return {
     name,
     address,
+    coords,
     categories,
   }
 }

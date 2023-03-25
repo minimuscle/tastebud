@@ -108,14 +108,14 @@ export default function AddLocationModal() {
     let url
     switch (item.place_type[0]) {
       case 'poi':
-        url = `./${item.text}&${
+        url = `./${item.text}&${item.center}&${
           item.properties.address ? item.properties.address + ', ' : ''
         }${item.context[1].text}, ${item.context[3].text}, ${
           item.context[4].text
         }`
         break
       case 'address':
-        url = `./${item.text}&${item.place_name}`
+        url = `./${item.text}&${item.center}&${item.place_name}`
         break
     }
     console.log(url)

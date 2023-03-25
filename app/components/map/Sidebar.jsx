@@ -12,10 +12,10 @@ import { useState } from 'react'
 import { useNavigate } from '@remix-run/react'
 
 export default function Sidebar(props) {
-  const [category, setCategory] = useState('')
+  const [category, setCategory] = useState({ value: '', label: '' })
   const navigate = useNavigate()
   const getBtnText = () => {
-    if (!category)
+    if (!category.value)
       return (
         <Button
           isDisabled
@@ -32,12 +32,12 @@ export default function Sidebar(props) {
         colorScheme="blue"
         width="100%"
         className="searchBtn"
-        onClick={props.search}
+        onClick={props.search(category.value)}
       >
-        Search area for{' '}
-        {category.slice(-1) === 's' || category === 'all'
-          ? category
-          : `${category}s`}
+        Search Area For{' '}
+        {category.label.slice(-1) === 's' || category.label === 'all'
+          ? category.label
+          : `${category.label}s`}
       </Button>
     )
   }
@@ -51,7 +51,9 @@ export default function Sidebar(props) {
     >
       <Heading as="h1">TasteBud</Heading>
       <Center>
-        <Text alignSelf="flex-end">v0.2.0</Text>
+        <Text className="version" alignSelf="flex-end">
+          v0.2.0
+        </Text>
       </Center>
 
       <Select
@@ -64,7 +66,7 @@ export default function Sidebar(props) {
             <Text fontSize="xl">{category.label}</Text>
           </Flex>
         )}
-        onChange={(e) => setCategory(e.value)}
+        onChange={(e) => setCategory({ value: e.value, label: e.label })}
       />
       {getBtnText()}
       <div className="sidebar-bottom">

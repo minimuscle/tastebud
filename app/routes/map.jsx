@@ -1,4 +1,4 @@
-import { Outlet, useLoaderData } from '@remix-run/react'
+import { Outlet, useLoaderData, useSubmit } from '@remix-run/react'
 import { useEffect, useRef, useState } from 'react'
 import styles from '~/styles/index.css'
 import mapboxstyles from 'mapbox-gl/dist/mapbox-gl.css'
@@ -28,10 +28,12 @@ export default function Map() {
     zoom: 15,
   })
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [marker, addMarker] = useState([])
+  const submit = useSubmit()
 
   //Intialize the map
   useEffect(() => {
-    onOpen()
+    //onOpen()
     //Initialize map only once.
     if (!map.current) {
       mapboxgl.accessToken = data.MAP_API
@@ -53,7 +55,12 @@ export default function Map() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const search = () => {}
+  const search = (category) => {
+    console.log(marker)
+    marker.forEach((item) => {
+      item.remove()
+    })
+  }
 
   return (
     <div id="map">
