@@ -169,18 +169,18 @@ export async function action({ request }) {
         .select('*', { count: 'exact', head: true })
         .eq('location_id', `${location.id}`)
       const response = count
-      console.log('number of reivews: ' + response)
+      console.log(`Number of reviews for ${location.name}: ${response}`)
       //responses = [...responses, ...response]
     } catch (e) {
       console.log(e)
     }
     try {
-      let { data } = await supabase
-        .from('reviews')
-        .select('*')
-        .eq('location_id', `${location.id}`)
+      let { data } = await supabase.rpc('average_reviews', {
+        location_id_param: location.id,
+      })
+      //.eq('location_id', `${location.id}`)
       const response = data
-      console.log('number of reivews: ' + response)
+      console.log(`Average review for ${location.name}: ${response}`)
       //responses = [...responses, ...response]
     } catch (e) {
       console.log(e)
