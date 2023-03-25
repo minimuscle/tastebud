@@ -67,23 +67,7 @@ export default function NewLocation() {
     }
   }, [loader, onClose, isToast, data, toast])
 
-  const handleSubmit = async (e) => {
-    // //TODO: Don't allow user ability to anon update location if it already esists.
-    // if (data) {
-    //   toast({
-    //     title: 'Location created.',
-    //     description: 'Your Location has been successfully added',
-    //     status: 'success',
-    //     duration: 5000,
-    //     isClosable: true,
-    //   })
-    //   onClose()
-    // }
-    // console.log(response)
-  }
-
   //TODO: Validate the form via yup
-  //TODO: Send these values to the dynamoDB database.
 
   return (
     <>
@@ -196,6 +180,8 @@ export async function action({ request }) {
   }
   const { data } = await supabase.from('locations').upsert(info).select()
   console.log(data)
+
+  //TODO: This should not redirect but use the popup locally using useFetcher
   return redirect(`/map/locationSuccess`)
 }
 

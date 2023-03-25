@@ -1,10 +1,11 @@
-import { Outlet, useLoaderData, useSubmit } from '@remix-run/react'
+import { Outlet, useFetcher, useLoaderData, useSubmit } from '@remix-run/react'
 import { useEffect, useRef, useState } from 'react'
 import styles from '~/styles/index.css'
 import mapboxstyles from 'mapbox-gl/dist/mapbox-gl.css'
 import mapboxgl from 'mapbox-gl' // eslint-disable-line import/no-webpack-loader-syntax
 import { createClient } from '@supabase/supabase-js'
 import Sidebar from '~/components/map/Sidebar'
+import geohash from 'ngeohash'
 import {
   Button,
   Modal,
@@ -29,13 +30,14 @@ export default function Map() {
   })
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [marker, addMarker] = useState([])
-  const submit = useSubmit()
+  const fetcher = useFetcher()
 
   //Intialize the map
   useEffect(() => {
     //onOpen()
     //Initialize map only once.
     if (!map.current) {
+      //TODO: Add a spinner here and then remove in on "map.on load"
       mapboxgl.accessToken = data.MAP_API
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
@@ -60,12 +62,21 @@ export default function Map() {
     marker.forEach((item) => {
       item.remove()
     })
+
+    const hash = geohash.encode(coords.lng, coords.lat, 5)
+    const hashList = [hash, ...geohash.neighbors(hash)]
+    console.log('searching ' + hash)
+    fetcher.submit({ hashList: hashList }, { method: 'post' })
   }
 
   return (
     <div id="map">
       <div ref={mapContainer} className="map-container" />
-      <Sidebar categories={data.categories} search={search} coords={coords} />
+      <Sidebar
+        categories={data.categories}
+        search={() => search}
+        coords={coords}
+      />
       <Outlet />
 
       {/* This is only for the now. This should not stay here forever */}
@@ -97,6 +108,29 @@ export default function Map() {
       </Modal>
     </div>
   )
+}
+
+export async function action({ request }) {
+  const body = await request.formData()
+  const hashList = body.get('hashList')
+  console.log(hashList)
+  const supabase = createClient(process.env.DATABASE, process.env.SUPABASE_KEY)
+  // let responses = []
+
+  //   for (let i = 0; i < hashList.length; i++) {
+  //     try {
+  //       let { data } = await supabase
+  //         .from('locations')
+  //         .select('*')
+  //         .like('hash', `${hashList[i]}%`)
+  //       console.log(data)
+  //       const response = data
+  //       responses = [...responses, ...response]
+  //     } catch (e) {
+  //       console.log(e)
+  //     }
+  //   }
+  return null
 }
 
 export async function loader() {
