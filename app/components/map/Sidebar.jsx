@@ -18,46 +18,15 @@ export default function Sidebar(props) {
 
   useEffect(() => {
     props.locations.current = fetcher.data
+    console.log(fetcher.submission)
   }, [fetcher, props.locations])
 
   const getBtnText = () => {
-    if (!category.value)
-      return (
-        <Button
-          isDisabled
-          colorScheme="blue"
-          width="100%"
-          className="searchBtn"
-        >
-          Search area
-        </Button>
-      )
-
-    return (
-      <fetcher.Form method="post">
-        <input
-          type="hidden"
-          name="coords"
-          value={[props.coords.lng, props.coords.lat]}
-        />
-        <Button
-          colorScheme="blue"
-          width="100%"
-          className="searchBtn"
-          name="category"
-          value={category.value}
-          type="submit"
-          /*onClick={() => {
-            props.search()
-          }}*/
-        >
-          Search Area For{' '}
-          {category.label.slice(-1) === 's' || category.label === 'all'
-            ? category.label
-            : `${category.label}s`}
-        </Button>
-      </fetcher.Form>
-    )
+    if (!category.value) return 'Search Area'
+    if (category.label.slice(-1) === 's') {
+      return 'Search Area For ' + category.label
+    }
+    return 'Search Area For ' + category.label + 's'
   }
 
   return (
@@ -86,7 +55,31 @@ export default function Sidebar(props) {
         )}
         onChange={(e) => setCategory({ value: e.value, label: e.label })}
       />
-      {getBtnText()}
+      <fetcher.Form method="post">
+        <input
+          type="hidden"
+          name="coords"
+          value={[props.coords.lng, props.coords.lat]}
+        />
+        <input type="hidden" name="intent" value={'search'} />
+        <Button
+          colorScheme="blue"
+          width="100%"
+          className="searchBtn"
+          name="category"
+          value={category.value}
+          isDisabled={!category.value}
+          isLoading={fetcher.submission}
+          loadingText="Loading"
+          type="submit"
+          /*onClick={() => {
+            props.search()
+          }}*/
+        >
+          {getBtnText()}
+        </Button>
+      </fetcher.Form>
+
       <div className="sidebar-bottom">
         <Center>
           <Heading as="h4" size="md">

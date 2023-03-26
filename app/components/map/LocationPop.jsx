@@ -1,36 +1,34 @@
 import AppTheme from '~/styles/AppTheme'
-import {
-  Popover,
-  PopoverTrigger,
-  Button,
-  PopoverContent,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverHeader,
-  PopoverBody,
-  Box,
-  Text,
-  Heading,
-  ChakraProvider,
-} from '@chakra-ui/react'
+import { Button, Box, Text, ChakraProvider } from '@chakra-ui/react'
+import Rating from 'react-rating'
+import { BsStarFill } from 'react-icons/bs'
 
 export default function LocationPop(props) {
-  const location = props.location
-
-  const toggleModal = () => {
-    props.setLocationId(location.id)
-    props.setAddress(location.address)
-    props.toggleModal()
-  }
+  const { location, count, average } = props
 
   return (
     <ChakraProvider theme={AppTheme}>
       <Box>
-        <Heading as='h2' size='md'>
+        <Button
+          colorScheme="teal"
+          variant="link"
+          onClick={() => props.togglePage(location.id)}
+        >
           {location.name}
-        </Heading>
+        </Button>
+
         <Text>{location.address}</Text>
-        <Button onClick={toggleModal}>Add New Review</Button>
+        <Text>
+          {average ? average.toFixed(1) : null}
+          <Rating
+            initialRating={average ? average.toFixed(1) : 0}
+            readonly
+            fractions={2}
+            emptySymbol={<BsStarFill size="18px" color="#d6d6d6" />}
+            fullSymbol={<BsStarFill size="18px" color="#ffd500" />}
+          />
+          ({count})
+        </Text>
       </Box>
     </ChakraProvider>
   )

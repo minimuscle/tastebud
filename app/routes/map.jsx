@@ -1,4 +1,10 @@
-import { Outlet, useLoaderData } from '@remix-run/react'
+import {
+  Outlet,
+  useActionData,
+  useFetcher,
+  useLoaderData,
+  useNavigate,
+} from '@remix-run/react'
 import * as ReactDOMClient from 'react-dom/client'
 import { useEffect, useRef, useState } from 'react'
 import styles from '~/styles/index.css'
@@ -33,6 +39,7 @@ export default function Map() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [marker, addMarker] = useState([])
   const locations = useRef()
+  const navigate = useNavigate()
 
   //Intialize the map
   useEffect(() => {
@@ -65,15 +72,18 @@ export default function Map() {
     marker.forEach((item) => {
       item.remove()
     })
+    console.log(locations.current)
     let locationsList = []
     locations.current.forEach((item) => {
-      const latlng = geohash.decode(item.hash)
+      const latlng = geohash.decode(item.location.hash)
       const popupNode = document.createElement('React.Fragment')
       const root = ReactDOMClient.createRoot(popupNode)
       root.render(
         <LocationPop
-          location={item}
-          // toggleModal={toggleModal}
+          location={item.location}
+          count={item.count}
+          average={item.data}
+          togglePage={togglePage}
           // setAddress={setAddress}
           // setLocationId={setLocationId}
         />
@@ -87,12 +97,17 @@ export default function Map() {
 
       point.getElement().addEventListener('mouseenter', (event) => {
         point.togglePopup()
+        //fetcher.submit({ intent: 'popup' }, { method: 'POST' })
       })
     })
     addMarker(marker.concat(locationsList))
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locations.current])
+
+  const togglePage = (location_id) => {
+    navigate(`./${location_id}`)
+  }
 
   return (
     <div id="map">
@@ -143,51 +158,51 @@ export async function action({ request }) {
   const hash = geohash.encode(lat, lng, 5)
   const hashList = [hash, ...geohash.neighbors(hash)]
   const supabase = createClient(process.env.DATABASE, process.env.SUPABASE_KEY)
-  let responses = []
 
-  for (let i = 0; i < hashList.length; i++) {
-    try {
-      let { data } = await supabase
-        .from('locations')
-        .select('*')
-        .like('hash', `${hashList[i]}%`)
-        .like('category', `%${category}%`)
-        .limit(50)
-      const response = data
-      responses = [...responses, ...response]
-    } catch (e) {
-      console.log(e)
-    }
-  }
-  console.log(responses)
-
-  responses.forEach(async (location) => {
-    console.log(location.id)
-    try {
-      let { count } = await supabase
-        .from('reviews')
-        .select('*', { count: 'exact', head: true })
-        .eq('location_id', `${location.id}`)
-      const response = count
-      console.log(`Number of reviews for ${location.name}: ${response}`)
-      //responses = [...responses, ...response]
-    } catch (e) {
-      console.log(e)
-    }
-    try {
-      let { data } = await supabase.rpc('average_reviews', {
-        location_id_param: location.id,
+  const queries = hashList.map((hash) => {
+    return supabase
+      .from('locations')
+      .select('*')
+      .like('hash', `${hash}%`)
+      .like('category', `%${category}%`)
+      .limit(50)
+      .then((response) => response.data)
+      .catch((e) => {
+        console.log(e)
+        return []
       })
-      //.eq('location_id', `${location.id}`)
-      const response = data
-      console.log(`Average review for ${location.name}: ${response}`)
-      //responses = [...responses, ...response]
-    } catch (e) {
-      console.log(e)
-    }
   })
 
-  return responses
+  const responses = await Promise.all(queries).then((results) => {
+    return results.reduce((acc, val) => [...acc, ...val], [])
+  })
+
+  console.log(responses)
+  const reply = await Promise.all(
+    responses.map(async (location) => {
+      try {
+        const { count } = await supabase
+          .from('reviews')
+          .select('*', { count: 'exact', head: true })
+          .eq('location_id', `${location.id}`)
+
+        const { data } = await supabase.rpc('average_reviews', {
+          location_id_param: location.id,
+        })
+
+        return {
+          location,
+          count,
+          data,
+        }
+      } catch (e) {
+        console.log(e)
+        return null
+      }
+    })
+  ).then((responses) => responses.filter(Boolean))
+  console.log(reply)
+  return reply
 }
 
 export async function loader() {
