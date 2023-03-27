@@ -27,6 +27,7 @@ import Select from 'react-select'
 import Rating from 'react-rating'
 import { BsStarFill } from 'react-icons/bs'
 import { createClient } from '@supabase/supabase-js'
+import { redirect } from '@remix-run/node'
 
 export default function NewReview() {
   const data = useLoaderData()
@@ -48,6 +49,12 @@ export default function NewReview() {
         <ModalBody>
           <form method="POST">
             <VStack spacing={4} align="flex-start">
+              <Input
+                type="hidden"
+                name="location_id"
+                value={data.location_id}
+              />
+              <Input type="hidden" name="rating" value={rating} />
               <FormControl>
                 <FormLabel>Category</FormLabel>
                 <FormHelperText>
@@ -56,6 +63,7 @@ export default function NewReview() {
                 <Select
                   placeholder="Select A Food Category..."
                   className="category-select"
+                  name="category"
                   options={data.categories}
                   formatOptionLabel={(category) => (
                     <Flex>
@@ -63,9 +71,7 @@ export default function NewReview() {
                       <Text fontSize="xl">{category.label}</Text>
                     </Flex>
                   )}
-                  onChange={(e) =>
-                    setCategory({ value: e.value, label: e.label })
-                  }
+                  onChange={(e) => setCategory(e.value)}
                 />
               </FormControl>
               <FormControl>
@@ -74,6 +80,7 @@ export default function NewReview() {
                   <Rating
                     onChange={(e) => setRating(e)}
                     fractions={2}
+                    value={rating}
                     emptySymbol={<BsStarFill size="30px" color="#d6d6d6" />}
                     fullSymbol={<BsStarFill size="30px" color="#ffd500" />}
                   />
@@ -86,7 +93,7 @@ export default function NewReview() {
                   Enter Your First Name (This will be assigned to your account
                   later)
                 </FormHelperText>
-                <Input id="name" name="name" />
+                <Input id="name" name="name" required />
               </FormControl>
               <FormControl>
                 <FormLabel>Title (Optional)</FormLabel>
@@ -106,6 +113,30 @@ export default function NewReview() {
       </ModalContent>
     </Modal>
   )
+}
+
+export async function action({ request }) {
+  const body = await request.formData()
+  const name = body.get('name')
+  const heading = body.get('heading')
+  const rating = body.get('rating')
+  const comment = body.get('comment')
+  const category = body.get('category')
+  const location_id = body.get('location_id')
+  const supabase = createClient(process.env.DATABASE, process.env.SUPABASE_KEY)
+  const info = {
+    user_id: name,
+    heading: heading,
+    rating: rating,
+    comment: comment,
+    category: category,
+    location_id: location_id,
+  }
+  const { data } = await supabase.from('reviews').insert(info).select()
+  console.log(data)
+
+  //TODO: This should not redirect but use the popup locally using useFetcher
+  return redirect(`/map/reviewSuccess`)
 }
 
 export async function loader({ params }) {

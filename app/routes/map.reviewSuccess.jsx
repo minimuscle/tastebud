@@ -6,8 +6,8 @@ export default function LocationSuccess() {
 
   useEffect(() => {
     toast({
-      title: 'Location Lreated.',
-      description: 'Your Location has been successfully added',
+      title: 'Review Created.',
+      description: 'Your Review has been successfully added',
       status: 'success',
       duration: 5000,
       isClosable: true,
