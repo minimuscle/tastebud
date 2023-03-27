@@ -23,7 +23,6 @@ import {
   useSubmit,
 } from '@remix-run/react'
 import { useEffect } from 'react'
-import NewLocation from '~/routes/map/add.$coords.$location'
 
 export default function AddLocationModal() {
   const { isOpen, onOpen, onClose } = useDisclosure()
