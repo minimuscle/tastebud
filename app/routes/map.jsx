@@ -1,6 +1,7 @@
 import {
   Outlet,
   useActionData,
+  useCatch,
   useFetcher,
   useLoaderData,
   useNavigate,
@@ -224,4 +225,29 @@ export function links() {
       href: mapboxstyles,
     },
   ]
+}
+
+export function CatchBoundary() {
+  const caught = useCatch()
+
+  return (
+    <div>
+      <h1>Caught</h1>
+      <p>Status: {caught.status}</p>
+      <pre>
+        <code>{JSON.stringify(caught.data, null, 2)}</code>
+      </pre>
+    </div>
+  )
+}
+
+export function ErrorBoundary({ error }) {
+  return (
+    <div>
+      <h1>Error</h1>
+      <p>{error.message}</p>
+      <p>The stack trace is:</p>
+      <pre>{error.stack}</pre>
+    </div>
+  )
 }
