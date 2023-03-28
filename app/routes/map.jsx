@@ -44,7 +44,7 @@ export default function Map() {
 
   //Intialize the map
   useEffect(() => {
-    onOpen()
+    //onOpen()
     //Initialize map only once.
     if (!map.current) {
       //TODO: Add a spinner here and then remove in on "map.on load"

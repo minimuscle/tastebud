@@ -29,12 +29,20 @@ h6 {
 .sidebar {
   position: absolute;
   margin: 25px !important;
+  margin-top: -30px !important;
   border-radius: var(--default-border-radius);
 }
 
 .map-area {
   margin-left: 262px; /*TODO: This needs to be dynamic or based on the size of the sidebar*/
   pointer-events: none;
+}
+
+.burger-menu {
+  position: absolute;
+  top: 35px;
+  left: 45px;
+  z-index: 1;
 }
 
 .sidebar h1 {
@@ -130,4 +138,70 @@ h6 {
 
 .link {
   color: teal;
+}
+
+.absolute-menu {
+  display: none;
+  visibility: hidden;
+  position: absolute;
+}
+
+@media screen and (max-width: 600px) {
+  .absolute-menu {
+    visibility: visible;
+    position: absolute;
+    width: 100%;
+    padding: 0 10px 0 65px;
+    margin-top: -10px;
+    right: 0;
+    top: 0;
+    display: flex;
+    float: right;
+  }
+
+  .absolute-menu Button {
+    height: 35px;
+  }
+
+  .absolute-menu Button:disabled {
+    opacity: 1;
+    color-scheme: 'blue.400';
+  }
+
+  .burger-menu {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+  }
+
+  .sidebar {
+    position: absolute;
+    margin: 0px !important;
+    margin-top: -50px !important;
+    border-radius: 0;
+    max-width: 100% !important;
+  }
+
+  .map-area {
+    margin-left: 262px; /*TODO: This needs to be dynamic or based on the size of the sidebar*/
+    pointer-events: none;
+  }
+
+  .sidebar h1 {
+    text-align: center;
+    padding-top: 20px;
+  }
+
+  .sidebar .version {
+    margin-bottom: 50px;
+  }
+
+  .sidebar-bottom {
+    position: inherit;
+    bottom: 0;
+    width: 100%;
+    padding-right: 30px;
+    padding-bottom: 20px;
+  }
 }
