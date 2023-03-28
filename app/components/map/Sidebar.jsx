@@ -22,16 +22,20 @@ export default function Sidebar(props) {
   const [category, setCategory] = useState({ value: '', label: '' })
   const navigate = useNavigate()
   const fetcher = useFetcher()
-  const { isOpen, onOpen, onClose, onToggle } = useDisclosure()
+  const [isOpen, setOpen] = useState()
+  const sidebarOpen = useRef()
   const [isSmallerThan600] = useMediaQuery('(max-width: 600px)')
 
   useEffect(() => {
     props.locations.current = fetcher.data
-    console.log(fetcher.submission)
+    console.log(sidebarOpen.current)
   }, [fetcher, props.locations])
 
   useEffect(() => {
-    onOpen()
+    console.log(isSmallerThan600)
+    if (!isSmallerThan600) {
+      setOpen(true)
+    }
   }, [])
 
   const getBtnText = () => {
@@ -46,7 +50,10 @@ export default function Sidebar(props) {
     <>
       <IconButton
         className="burger-menu"
-        onClick={onToggle}
+        onClick={() => {
+          setOpen(!isOpen)
+          sidebarOpen.current = isOpen
+        }}
         icon={<TbMenu2 />}
         colorScheme="gray"
         size="lg"
@@ -133,7 +140,9 @@ export default function Sidebar(props) {
               loadingText="Loading"
               type="submit"
               onClick={() => {
-                onToggle()
+                if (isSmallerThan600) {
+                  setOpen(false)
+                }
               }}
             >
               {getBtnText()}
