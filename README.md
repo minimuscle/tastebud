@@ -1,34 +1,36 @@
-# Welcome to Remix!
+# Tastebud
 
-- [Remix Docs](https://remix.run/docs)
+Tastebud is a web app that lets users rate and review specific food and drink items for their favorite locations. With Tastebud, you can discover new dishes and drinks, share your experiences with others, and get recommendations for what to try next.
 
-## Deployment
+## Features
 
-After having run the `create-remix` command and selected "Vercel" as a deployment target, you only need to [import your Git repository](https://vercel.com/new) into Vercel, and it will be deployed.
+- Rate and review food and drink items at specific locations
+- Search for reviews by location, item, or user
+- Get personalized recommendations based on your past reviews and preferences
+- Follow other users to see their reviews and recommendations
 
-If you'd like to avoid using a Git repository, you can also deploy the directory by running [Vercel CLI](https://vercel.com/cli):
+## Installation
 
-```sh
-npm i -g vercel
-vercel
-```
+Tastebud is a web app, so there's nothing to install. Just visit [https://tastebudreviews.com](https://tastebudreviews.com) to start using it.
 
-It is generally recommended to use a Git repository, because future commits will then automatically be deployed by Vercel, through its [Git Integration](https://vercel.com/docs/concepts/git).
+## Roadmap
 
-## Development
+Here's a roadmap for the next versions of Tastebud:
 
-To run your Remix app locally, make sure your project's local dependencies are installed:
+### 0.1 (Completed)
 
-```sh
-npm install
-```
+- Basic app setup
+- Location search
 
-Afterwards, start the Remix development server like so:
+### 0.2 (Completed)
 
-```sh
-npm run dev
-```
+- Item search and review submission
+- Display locations and their reviews on the map
+- Mobile Functionality
 
-Open up [http://localhost:3000](http://localhost:3000) and you should be ready to go!
+### 0.3 (Upcoming)
 
-If you're used to using the `vercel dev` command provided by [Vercel CLI](https://vercel.com/cli) instead, you can also use that, but it's not needed.
+- Improved recommendation engine
+- User accounts
+
+### More to come
