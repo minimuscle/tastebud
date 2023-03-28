@@ -1,4 +1,7 @@
 # Tastebud
+<img src="https://img.shields.io/badge/Version-0.2.2-blue?style=for-the-badge"> <img src="https://img.shields.io/github/deployments/minimuscle/tastebud/Production?label=Production&style=for-the-badge" /> <img src="https://img.shields.io/github/deployments/minimuscle/tastebud/Preview?label=Preview&style=for-the-badge">
+
+<a href="https://www.buymeacoffee.com/dumblydorr" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
 Tastebud is a web app that lets users rate and review specific food and drink items for their favorite locations. With Tastebud, you can discover new dishes and drinks, share your experiences with others, and get recommendations for what to try next.
 
