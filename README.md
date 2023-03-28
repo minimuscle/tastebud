@@ -1,34 +1,39 @@
-# Welcome to Remix!
+# Tastebud
+<img src="https://img.shields.io/badge/Version-0.2.2-blue?style=for-the-badge"> <img src="https://img.shields.io/github/deployments/minimuscle/tastebud/Production?label=Production&style=for-the-badge" /> <img src="https://img.shields.io/github/deployments/minimuscle/tastebud/Preview?label=Preview&style=for-the-badge">
 
-- [Remix Docs](https://remix.run/docs)
+<a href="https://www.buymeacoffee.com/dumblydorr" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
-## Deployment
+Tastebud is a web app that lets users rate and review specific food and drink items for their favorite locations. With Tastebud, you can discover new dishes and drinks, share your experiences with others, and get recommendations for what to try next.
 
-After having run the `create-remix` command and selected "Vercel" as a deployment target, you only need to [import your Git repository](https://vercel.com/new) into Vercel, and it will be deployed.
+## Features
 
-If you'd like to avoid using a Git repository, you can also deploy the directory by running [Vercel CLI](https://vercel.com/cli):
+- Rate and review food and drink items at specific locations
+- Search for reviews by location, item, or user
+- Get personalized recommendations based on your past reviews and preferences
+- Follow other users to see their reviews and recommendations
 
-```sh
-npm i -g vercel
-vercel
-```
+## Installation
 
-It is generally recommended to use a Git repository, because future commits will then automatically be deployed by Vercel, through its [Git Integration](https://vercel.com/docs/concepts/git).
+Tastebud is a web app, so there's nothing to install. Just visit [https://tastebudreviews.com](https://tastebudreviews.com) to start using it.
 
-## Development
+## Roadmap
 
-To run your Remix app locally, make sure your project's local dependencies are installed:
+Here's a roadmap for the next versions of Tastebud:
 
-```sh
-npm install
-```
+### 0.1 (Completed)
 
-Afterwards, start the Remix development server like so:
+- Basic app setup
+- Location search
 
-```sh
-npm run dev
-```
+### 0.2 (Completed)
 
-Open up [http://localhost:3000](http://localhost:3000) and you should be ready to go!
+- Item search and review submission
+- Display locations and their reviews on the map
+- Mobile Functionality
 
-If you're used to using the `vercel dev` command provided by [Vercel CLI](https://vercel.com/cli) instead, you can also use that, but it's not needed.
+### 0.3 (Upcoming)
+
+- Improved recommendation engine
+- User accounts
+
+### More to come
