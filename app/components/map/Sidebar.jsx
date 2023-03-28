@@ -106,7 +106,7 @@ export default function Sidebar(props) {
           <Heading as="h1">TasteBud</Heading>
           <Center>
             <Text className="version" alignSelf="flex-end">
-              v0.2.1
+              v0.2.2
             </Text>
           </Center>
 
