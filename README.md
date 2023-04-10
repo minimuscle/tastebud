@@ -1,4 +1,5 @@
 # Tastebud
+
 <img src="https://img.shields.io/badge/Version-0.2.2-blue?style=for-the-badge"> <img src="https://img.shields.io/github/deployments/minimuscle/tastebud/Production?label=Production&style=for-the-badge" /> <img src="https://img.shields.io/github/deployments/minimuscle/tastebud/Preview?label=Preview&style=for-the-badge">
 
 <a href="https://www.buymeacoffee.com/dumblydorr" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
@@ -31,9 +32,26 @@ Here's a roadmap for the next versions of Tastebud:
 - Display locations and their reviews on the map
 - Mobile Functionality
 
-### 0.3 (Upcoming)
+### 0.3 (In-Progress)
 
 - Improved recommendation engine
 - User accounts
+- Require Signin
+- Link Reviews to account
+- Account Page
+- Show Reviews for Each account
+- Change display name
+- "Welcome Screen" to set display name and other details on public page, including bio
+
+### 0.4
+
+- Redesigned UI
+- Mobile-Optimized Design
+
+### 0.5
+
+- Admin Panel for Moderators
+- User-Enabled Reporting of Reviews and Locations
+- "Request Location" for admins.
 
 ### More to come
