@@ -1,5 +1,5 @@
 import { redirect } from '@remix-run/node'
-import { createClient } from '@supabase/supabase-js'
+import { createServerClient } from '@supabase/auth-helpers-remix'
 
 export default function SignUp() {
   return (
@@ -12,11 +12,24 @@ export default function SignUp() {
 }
 
 export async function action({ request }) {
-  const supabase = createClient(process.env.DATABASE, process.env.SUPABASE_KEY)
+  const response = new Response()
+  const supabase = createServerClient(
+    process.env.DATABASE,
+    process.env.SUPABASE_KEY,
+    { request, response }
+  )
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
+    options: {
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent',
+      },
+    },
   })
-  console.log(error)
+  console.log('data')
   console.log(data)
+  console.log('error')
+  console.log(error)
   return redirect(data.url)
 }

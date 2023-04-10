@@ -1,11 +1,5 @@
-import {
-  Outlet,
-  useActionData,
-  useCatch,
-  useFetcher,
-  useLoaderData,
-  useNavigate,
-} from '@remix-run/react'
+import { Outlet, useLoaderData, useNavigate } from '@remix-run/react'
+import { json } from '@remix-run/node'
 import * as ReactDOMClient from 'react-dom/client'
 import { useEffect, useRef, useState } from 'react'
 import styles from '~/styles/index.css'
@@ -27,6 +21,8 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import LocationPop from '~/components/map/LocationPop'
+import { createServerClient } from '@supabase/auth-helpers-remix'
+import Profile from '~/components/map/Profile'
 
 export default function Map() {
   const data = useLoaderData()
@@ -44,7 +40,7 @@ export default function Map() {
 
   //Intialize the map
   useEffect(() => {
-    onOpen()
+    //onOpen()
     //Initialize map only once.
     if (!map.current) {
       //TODO: Add a spinner here and then remove in on "map.on load"
@@ -118,6 +114,7 @@ export default function Map() {
         coords={coords}
         locations={locations}
       />
+      <Profile supabaseKeys={data.supabase} />
       <Outlet />
 
       {/* This is only for the now. This should not stay here forever */}
@@ -206,15 +203,27 @@ export async function action({ request }) {
   return reply
 }
 
-export async function loader() {
-  const MAP_API = process.env.MAPS_ACCESS_TOKEN
-  const supabase = createClient(process.env.DATABASE, process.env.SUPABASE_KEY)
+export async function loader({ request }) {
+  const response = new Response()
+  const supabase = createServerClient(
+    process.env.DATABASE,
+    process.env.SUPABASE_KEY,
+    {
+      request,
+      response,
+    }
+  )
   const categories = await supabase.from('categories').select()
   const data = {
-    MAP_API: MAP_API,
+    MAP_API: process.env.MAPS_ACCESS_TOKEN,
     categories: categories.data,
+    supabase: {
+      DATABASE: process.env.DATABASE,
+      SUPABASE_KEY: process.env.SUPABASE_KEY,
+    },
   }
-  return data
+
+  return json(data, { headers: response.headers })
 }
 
 export function links() {
@@ -225,29 +234,4 @@ export function links() {
       href: mapboxstyles,
     },
   ]
-}
-
-export function CatchBoundary() {
-  const caught = useCatch()
-
-  return (
-    <div>
-      <h1>Caught</h1>
-      <p>Status: {caught.status}</p>
-      <pre>
-        <code>{JSON.stringify(caught.data, null, 2)}</code>
-      </pre>
-    </div>
-  )
-}
-
-export function ErrorBoundary({ error }) {
-  return (
-    <div>
-      <h1>Error</h1>
-      <p>{error.message}</p>
-      <p>The stack trace is:</p>
-      <pre>{error.stack}</pre>
-    </div>
-  )
 }

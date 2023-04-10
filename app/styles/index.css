@@ -205,3 +205,10 @@ h6 {
     padding-bottom: 20px;
   }
 }
+
+.profile {
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin: 20px;
+}

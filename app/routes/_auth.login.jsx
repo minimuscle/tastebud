@@ -1,21 +1,32 @@
 import { redirect } from '@remix-run/node'
-import { createClient } from '@supabase/supabase-js'
+import { useFetcher } from '@remix-run/react'
+import { createServerClient } from '@supabase/auth-helpers-remix'
 
 export default function Login() {
+  const login = useFetcher()
   return (
     <div>
       Login Form
-      <form method="POST">
+      <login.Form method="POST">
         <button type="submit">Get Session</button>
-      </form>
+      </login.Form>
     </div>
   )
 }
 
 export async function action({ request }) {
-  const supabase = createClient(process.env.DATABASE, process.env.SUPABASE_KEY)
-  const { data, error } = await supabase.auth.getSession()
-  console.log(error)
-  console.log(data)
-  return redirect('/')
+  const response = new Response()
+  const supabase = createServerClient(
+    process.env.DATABASE,
+    process.env.SUPABASE_KEY,
+    { request, response }
+  )
+  const { data: user, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+  })
+
+  console.log('error' + error)
+  console.log('data', user)
+
+  if (user) return redirect('/')
 }
