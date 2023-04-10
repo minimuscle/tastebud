@@ -28,11 +28,9 @@ export default function Sidebar(props) {
 
   useEffect(() => {
     props.locations.current = fetcher.data
-    console.log(sidebarOpen.current)
   }, [fetcher, props.locations])
 
   useEffect(() => {
-    console.log(isSmallerThan600)
     if (!isSmallerThan600) {
       setOpen(true)
     }

@@ -1,4 +1,9 @@
-import { Outlet, useLoaderData, useNavigate } from '@remix-run/react'
+import {
+  Outlet,
+  useLoaderData,
+  useNavigate,
+  useOutletContext,
+} from '@remix-run/react'
 import { json } from '@remix-run/node'
 import * as ReactDOMClient from 'react-dom/client'
 import { useEffect, useRef, useState } from 'react'
@@ -37,6 +42,7 @@ export default function Map() {
   const [marker, addMarker] = useState([])
   const locations = useRef()
   const navigate = useNavigate()
+  const supabase = useOutletContext().supabase
 
   //Intialize the map
   useEffect(() => {
@@ -114,7 +120,7 @@ export default function Map() {
         coords={coords}
         locations={locations}
       />
-      <Profile supabaseKeys={data.supabase} />
+      <Profile supabase={supabase} />
       <Outlet />
 
       {/* This is only for the now. This should not stay here forever */}

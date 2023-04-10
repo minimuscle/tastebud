@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useFetcher,
   useLoaderData,
 } from '@remix-run/react'
 import { ChakraProvider } from '@chakra-ui/react'
@@ -13,7 +14,7 @@ import {
   createBrowserClient,
   createServerClient,
 } from '@supabase/auth-helpers-remix'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { json } from '@remix-run/node'
 import { SessionContext } from '~/contexts/SessionContext'
 
@@ -27,18 +28,67 @@ export const meta = () => ({
 
 export const loader = async ({ request }) => {
   const response = new Response()
-  const supabase = createServerClient(
-    process.env.DATABASE,
-    process.env.SUPABASE_KEY,
-    { request, response }
-  )
-  const { data: session } = await supabase.auth.getSession()
+  const env = {
+    DATABASE: process.env.DATABASE,
+    SUPABASE_KEY: process.env.SUPABASE_KEY,
+  }
+  const supabase = createServerClient(env.DATABASE, env.SUPABASE_KEY, {
+    request,
+    response,
+  })
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
   console.log(session)
-  return json({ session }, { headers: response.headers })
+  return json({ session, env }, { headers: response.headers })
 }
 
+export const action = () => null
+
 export default function App() {
-  const { session } = useLoaderData()
+  const { session, env } = useLoaderData()
+  const [supabase] = useState(() =>
+    createBrowserClient(env.DATABASE, env.SUPABASE_KEY)
+  )
+  const fetcher = useFetcher()
+  const serverAccessToken = useRef(session?.access_token)
+
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('changing: ')
+      console.log(event)
+      console.log(session?.access_token)
+      console.log(serverAccessToken.current)
+      console.log(session?.access_token !== serverAccessToken.current)
+      if (!session) {
+        console.log('session is null')
+        if (serverAccessToken.current) {
+          serverAccessToken.current = undefined
+          fetcher.submit(null, {
+            method: 'post',
+            action: '/handle-supabase-auth',
+          })
+        }
+      }
+      if (session?.access_token !== serverAccessToken.current) {
+        console.log('we are here')
+        // server and client are out of sync.
+        // Remix recalls active loaders after actions complete
+        serverAccessToken.current = session.access_token
+        fetcher.submit(null, {
+          method: 'post',
+          action: '/handle-supabase-auth',
+        })
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [serverAccessToken, supabase, fetcher])
+
   return (
     <html lang="en">
       <head>
@@ -48,7 +98,7 @@ export default function App() {
       <body>
         <SessionContext.Provider value={session}>
           <ChakraProvider theme={AppTheme}>
-            <Outlet />
+            <Outlet context={{ supabase }} />
           </ChakraProvider>
         </SessionContext.Provider>
 

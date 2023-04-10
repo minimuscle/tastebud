@@ -4,28 +4,23 @@ import { SessionContext } from '~/contexts/SessionContext'
 import { FaCog, FaUserAlt, FaSignOutAlt } from 'react-icons/fa'
 import { createBrowserClient } from '@supabase/auth-helpers-remix'
 import { redirect } from '@remix-run/node'
-import { useNavigate } from '@remix-run/react'
+import { useNavigate, useOutletContext } from '@remix-run/react'
 
-export default function Profile({ supabaseKeys }) {
-  const session = useContext(SessionContext)
+export default function Profile({ supabase }) {
   const navigate = useNavigate()
-
-  const supabase = createBrowserClient(
-    supabaseKeys.DATABASE,
-    supabaseKeys.SUPABASE_KEY
-  )
+  const session = useContext(SessionContext)
+  console.log(session)
 
   const logOut = async () => {
-    const { error } = await supabase.auth.signOut()
-    console.log(error)
+    await supabase.auth.signOut()
   }
 
   return (
     <div className="profile">
-      {session === null ? (
+      {session ? (
         <Menu className="profile">
           <MenuButton as={Button} leftIcon={<FaUserAlt />}>
-            {session.user.email}
+            {session.user?.email}
           </MenuButton>
           <MenuList>
             <MenuItem icon={<FaUserAlt />}>Profile</MenuItem>

@@ -1,17 +1,24 @@
 import { redirect } from '@remix-run/node'
+import { useOutletContext } from '@remix-run/react'
 import { createServerClient } from '@supabase/auth-helpers-remix'
 
 export default function SignUp() {
+  const { supabase } = useOutletContext()
+
+  const handleGoogleLogin = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+    })
+  }
+
   return (
     <div>
-      <form method="POST">
-        <button type="submit">Sign in with Google</button>
-      </form>
+      <button onClick={handleGoogleLogin}>Sign in with Google</button>
     </div>
   )
 }
 
-export async function action({ request }) {
+/*export async function action({ request }) {
   const response = new Response()
   const supabase = createServerClient(
     process.env.DATABASE,
@@ -32,4 +39,4 @@ export async function action({ request }) {
   console.log('error')
   console.log(error)
   return redirect(data.url)
-}
+}*/
