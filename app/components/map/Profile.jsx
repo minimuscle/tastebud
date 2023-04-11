@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Menu, MenuList, MenuItem, MenuButton, Button } from '@chakra-ui/react'
 import { SessionContext } from '~/contexts/SessionContext'
 import { FaCog, FaUserAlt, FaSignOutAlt } from 'react-icons/fa'
