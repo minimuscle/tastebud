@@ -1,6 +1,8 @@
+import { Container } from '@chakra-ui/react'
 import { redirect } from '@remix-run/node'
 import { useOutletContext } from '@remix-run/react'
-import { createServerClient } from '@supabase/auth-helpers-remix'
+import { Auth } from '@supabase/auth-ui-react'
+import { ThemeSupa } from '@supabase/auth-ui-shared'
 
 export default function SignUp() {
   const { supabase } = useOutletContext()
@@ -12,9 +14,15 @@ export default function SignUp() {
   }
 
   return (
-    <div>
-      <button onClick={handleGoogleLogin}>Sign in with Google</button>
-    </div>
+    <Container pt="20%">
+      <Auth
+        supabaseClient={supabase}
+        appearance={{ theme: ThemeSupa }}
+        providers={['facebook', 'google']}
+      />
+    </Container>
+
+    //TODO: Create proper CSS for these boxes.
   )
 }
 
