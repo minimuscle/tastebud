@@ -31,7 +31,7 @@ export default function Profile({ supabase }) {
           </MenuList>
         </Menu>
       ) : (
-        <Button onClick={() => navigate('/signup')}>Sign In</Button>
+        <Button onClick={() => navigate('/login')}>Sign In</Button>
       )}
     </div>
   )
