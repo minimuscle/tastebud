@@ -51,9 +51,12 @@ export default function Map() {
     if (!map.current) {
       //TODO: Add a spinner here and then remove in on "map.on load"
       mapboxgl.accessToken = data.MAP_API
+      const darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+      console.log(darkMode)
+      const mapStyle = darkMode ? 'mapbox://styles/minimuscle/clgz2qh35005d01rhf3gvc0h2?optimize=true' : 'mapbox://styles/minimuscle/clgz2gzsa006l01r8fx7x7j4a?optimize=true'
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v12?optimize=true',
+        style: mapStyle,
         center: [coords.lat, coords.lng],
         zoom: coords.zoom,
       })
