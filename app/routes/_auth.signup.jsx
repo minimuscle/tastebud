@@ -7,17 +7,13 @@ import {
   FormControl,
   FormLabel,
   Heading,
-  IconButton,
   Input,
   Text,
   VStack,
 } from '@chakra-ui/react'
-import { redirect } from '@remix-run/node'
-import { Form, Link, useFetcher, useOutletContext } from '@remix-run/react'
-import { Auth } from '@supabase/auth-ui-react'
-import { ThemeSupa } from '@supabase/auth-ui-shared'
-import { useEffect } from 'react'
-import { FaFacebook, FaTimes } from 'react-icons/fa'
+import { Link, useFetcher, useOutletContext } from '@remix-run/react'
+import { FaFacebook } from 'react-icons/fa'
+import { FcGoogle } from 'react-icons/fc'
 import styles from '~/styles/index.css'
 
 export default function SignUp() {
@@ -30,27 +26,11 @@ export default function SignUp() {
     })
   }
 
-  const handleCallbackResponse = async () => {
+  const handleGoogleLogin = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
     })
   }
-
-  useEffect(() => {
-    /* global google */
-    google.accounts.id.initialize({
-      client_id:
-        '1050556443118-vc6rt32saaaknojr9smeqo9hgp8ed4vo.apps.googleusercontent.com',
-      callback: handleCallbackResponse,
-    })
-
-    google.accounts.id.renderButton(document.getElementById('signInDiv'), {
-      theme: 'outline',
-      size: 'large',
-      text: 'signup_with',
-      width: '300px', //TODO: Make this the correct size
-    })
-  }, [])
 
   return (
     <Flex minH="100vh" alignContent="center" justifyContent="center">
@@ -69,7 +49,15 @@ export default function SignUp() {
             </Heading>
             <Text color="gray.400">Sign up with one of our below options</Text>
             <br />
-            <div id="signInDiv" className="google"></div>
+            <Button
+              minWidth="300px"
+              variant={'outline'}
+              textColor="gray.500"
+              leftIcon={<FcGoogle />}
+              onClick={() => handleGoogleLogin()}
+            >
+              Continue with Google
+            </Button>
             <Button
               colorScheme="facebook"
               minWidth="300px"
@@ -122,33 +110,8 @@ export default function SignUp() {
         </Container>
       </Center>
     </Flex>
-
-    //TODO: Create proper CSS for these boxes.
   )
 }
-
-/*export async function action({ request }) {
-  const response = new Response()
-  const supabase = createServerClient(
-    process.env.DATABASE,
-    process.env.SUPABASE_KEY,
-    { request, response }
-  )
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      queryParams: {
-        access_type: 'offline',
-        prompt: 'consent',
-      },
-    },
-  })
-  console.log('data')
-  console.log(data)
-  console.log('error')
-  console.log(error)
-  return redirect(data.url)
-}*/
 
 export function links() {
   return [{ rel: 'stylesheet', href: styles }]

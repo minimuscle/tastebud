@@ -39,7 +39,6 @@ export const loader = async ({ request }) => {
   const {
     data: { session },
   } = await supabase.auth.getSession()
-  console.log(session)
   return json({ session, env }, { headers: response.headers })
 }
 
@@ -57,13 +56,7 @@ export default function App() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('changing: ')
-      console.log(event)
-      console.log(session?.access_token)
-      console.log(serverAccessToken.current)
-      console.log(session?.access_token !== serverAccessToken.current)
       if (!session) {
-        console.log('session is null')
         if (serverAccessToken.current) {
           serverAccessToken.current = undefined
           fetcher.submit(null, {
@@ -73,7 +66,6 @@ export default function App() {
         }
       }
       if (session?.access_token !== serverAccessToken.current) {
-        console.log('we are here')
         // server and client are out of sync.
         // Remix recalls active loaders after actions complete
         serverAccessToken.current = session.access_token
