@@ -32,9 +32,8 @@ Here's a roadmap for the next versions of Tastebud:
 - Display locations and their reviews on the map
 - Mobile Functionality
 
-### 0.3 (In-Progress)
+### 0.3 (Completed)
 
-- Improved recommendation engine
 - User accounts
 
 ### 0.4
@@ -45,6 +44,7 @@ Here's a roadmap for the next versions of Tastebud:
 ### 0.5
 
 - Admin Panel for Moderators
+- Improved recommendation engine
 - User-Enabled Reporting of Reviews and Locations
 - "Request Location" for admins.
 
