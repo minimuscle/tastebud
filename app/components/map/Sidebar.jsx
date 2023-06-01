@@ -19,6 +19,7 @@ import { useFetcher, useNavigate } from '@remix-run/react'
 import { TbMenu2 } from 'react-icons/tb'
 
 export default function Sidebar(props) {
+  const version = 'v0.3.0'
   const [category, setCategory] = useState({ value: '', label: '' })
   const navigate = useNavigate()
   const fetcher = useFetcher()
@@ -28,11 +29,9 @@ export default function Sidebar(props) {
 
   useEffect(() => {
     props.locations.current = fetcher.data
-    console.log(sidebarOpen.current)
   }, [fetcher, props.locations])
 
   useEffect(() => {
-    console.log(isSmallerThan600)
     if (!isSmallerThan600) {
       setOpen(true)
     }
@@ -106,7 +105,7 @@ export default function Sidebar(props) {
           <Heading as="h1">TasteBud</Heading>
           <Center>
             <Text className="version" alignSelf="flex-end">
-              v0.2.2
+              {version}
             </Text>
           </Center>
 

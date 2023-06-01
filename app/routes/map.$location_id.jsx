@@ -28,6 +28,7 @@ import {
   Center,
   Wrap,
   WrapItem,
+  Badge,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import Select from 'react-select'
@@ -90,10 +91,12 @@ export default function NewReview() {
                             maxW="640px"
                             height="250px"
                           >
+                            <Badge mb="20px">{review.category}</Badge>
                             <Heading size="lg" as="h1">
                               {review.heading.charAt(0).toUpperCase() +
                                 review.heading.slice(1)}
                             </Heading>
+
                             <Text>
                               <Rating
                                 className="rating-comment"
