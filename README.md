@@ -35,6 +35,12 @@ Here's a roadmap for the next versions of Tastebud:
 ### 0.3 (Completed)
 
 - User accounts
+- Require Signin
+- Link Reviews to account
+- Account Page
+- Show Reviews for Each account
+- Change display name
+- "Welcome Screen" to set display name and other details on public page, including bio
 
 ### 0.4
 
