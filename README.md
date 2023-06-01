@@ -42,10 +42,12 @@ Here's a roadmap for the next versions of Tastebud:
 - Change display name
 - "Welcome Screen" to set display name and other details on public page, including bio
 
-### 0.4
+### 0.4 (In-Progress)
 
 - Redesigned UI
 - Mobile-Optimized Design
+- Error / Catch Boundary Implementation
+- Refactor Code
 
 ### 0.5
 
