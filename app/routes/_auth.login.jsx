@@ -1,9 +1,9 @@
 import styles from '~/styles/index.css'
 
-export default function map() {
+export default function Login() {
   return (
     <div>
-      <h1>Map Folder</h1>
+      <h1>Login</h1>
     </div>
   )
 }

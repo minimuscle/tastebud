@@ -21,3 +21,8 @@ h5,
 h6 {
   font-family: 'Raleway', sans-serif !important;
 }
+
+.map-container {
+  height: 90vh;
+  width: 100%;
+}
