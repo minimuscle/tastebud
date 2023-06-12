@@ -1,6 +1,6 @@
 import { GoogleMap, MarkerF, InfoBox, InfoWindow } from '@react-google-maps/api'
-import { useSearchParams } from '@remix-run/react/dist'
-import { useMemo } from 'react'
+import { useFetcher, useSearchParams } from '@remix-run/react/dist'
+import { useEffect, useMemo } from 'react'
 import PoiPopup from '~/components/map/poiPopup'
 import * as ReactDOMClient from 'react-dom/client'
 
@@ -8,27 +8,33 @@ export default function Map() {
   const [searchParams, setSearchParams] = useSearchParams()
   const lat = searchParams.get('lat') || -37.8148
   const lng = searchParams.get('lng') || 144.9638
+  const placeFetcher = useFetcher()
+
+  useEffect(() => {
+    console.log(placeFetcher.state)
+  }, [placeFetcher.state])
 
   const mapLoad = (map) => {
     map.addListener('click', (event) => {
       if (event.placeId) {
         event.stop()
+        //Search for the place ID on supabase before attempting to render the popup
+        const placeId = event.placeId
+        placeFetcher.submit({ placeId: placeId }, { method: 'post' })
 
-        // Create a new InfoWindow object
-        const infowindow = new window.google.maps.InfoWindow()
+        //FIXME: This doesn't actually wait yet. It needs to await the fetcher
+        placeFetcher.state === 'idle' &&
+          placeFetcher.data &&
+          console.log(placeFetcher.data)
 
         // Create a new React.Fragment element to hold the React component
-        const popupNode = document.createElement('React.Fragment')
-
         // Create a new React root and render the PoiPopup component into it
+        const infowindow = new window.google.maps.InfoWindow()
+        const popupNode = document.createElement('React.Fragment')
         const root = ReactDOMClient.createRoot(popupNode)
         root.render(<PoiPopup />)
-
-        // Set the position and content of the InfoWindow object
         infowindow.setPosition(event.latLng)
         infowindow.setContent(popupNode)
-
-        // Open the InfoWindow object on the map
         infowindow.open(map)
       }
     })

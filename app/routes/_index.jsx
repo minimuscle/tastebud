@@ -57,3 +57,26 @@ export async function loader() {
 export function links() {
   return [{ rel: 'stylesheet', href: styles }]
 }
+
+export async function action({ request }) {
+  const body = await request.formData()
+  const placeId = body.get('placeId')
+  console.log(placeId)
+
+  //search supabase for the placeId
+  const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_KEY
+  )
+  const { data: place, error } = await supabase
+    .from('locations')
+    .select('*')
+    .eq('id', placeId)
+    .single()
+  if (error) {
+    console.log(error)
+    return json({ error: 'Error fetching place' }, { status: 500 })
+  }
+
+  return place
+}
