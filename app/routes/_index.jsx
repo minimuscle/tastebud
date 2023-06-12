@@ -1,7 +1,13 @@
+import { Box, Flex } from '@chakra-ui/react'
 import { useLoadScript } from '@react-google-maps/api'
 import { Outlet, useLoaderData } from '@remix-run/react'
+import { Suspense } from 'react'
+import Header from '~/components/layout/header'
+import Categories from '~/components/layout/categories'
 import Map from '~/components/map/map'
 import styles from '~/styles/index.css'
+import { createClient } from '@supabase/supabase-js'
+import { json } from '@remix-run/node'
 
 //This should provide the basic theming of the website, including a header and the map
 export default function Index() {
@@ -10,19 +16,41 @@ export default function Index() {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: loaderData.GOOGLE_MAPS_API_KEY,
   })
-  if (!isLoaded) return <div>Loading...</div>
+  //if (!isLoaded) return <div>Loading...</div>
 
   return (
-    <div>
-      <h1>index</h1>
-      <Map />
+    <Flex flexDirection="column" height="100vh">
+      <Header />
+      <Categories categories={loaderData.categories} />
+      <Box flex="1">
+        <Suspense fallback={<div>Loading...</div>}>
+          {isLoaded && <Map />}
+        </Suspense>
+      </Box>
       <Outlet />
-    </div>
+    </Flex>
   )
 }
 
 export async function loader() {
-  return { GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY }
+  //setup supabase
+  const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_KEY
+  )
+  //get categories from supabase
+  const { data: categories, error } = await supabase
+    .from('categories')
+    .select('*')
+  if (error) {
+    console.log(error)
+    return json({ error: 'Error fetching categories' }, { status: 500 })
+  }
+
+  return {
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
+    categories: categories,
+  }
 }
 
 //add styles via remix links
