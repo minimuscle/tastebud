@@ -1,4 +1,4 @@
-import { Box, Flex } from '@chakra-ui/react'
+import { Box, Flex, HStack } from '@chakra-ui/react'
 import { useLoadScript } from '@react-google-maps/api'
 import { Outlet, useLoaderData } from '@remix-run/react'
 import { Suspense } from 'react'
@@ -23,9 +23,12 @@ export default function Index() {
       <Header />
       <Categories categories={loaderData.categories} />
       <Box flex="1">
-        <Suspense fallback={<div>Loading...</div>}>
-          {isLoaded && <Map />}
-        </Suspense>
+        <HStack height="100%" width="100%">
+          <Box width="1184px" height="100%"></Box>
+          <Suspense fallback={<div>Loading...</div>}>
+            {isLoaded && <Map />}
+          </Suspense>
+        </HStack>
       </Box>
       <Outlet />
     </Flex>
