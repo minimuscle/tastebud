@@ -5,6 +5,9 @@ import {
   HStack,
   Heading,
   IconButton,
+  Input,
+  InputGroup,
+  InputRightElement,
   Link,
   Menu,
   MenuButton,
@@ -15,6 +18,7 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react'
+import { FaSearch } from 'react-icons/fa'
 
 export default function Header() {
   return (
@@ -30,11 +34,29 @@ export default function Header() {
           bottom="7.5px"
           right="0"
           marginRight="-50px"
-          color="red"
+          color="red.600"
         >
           V0.4.0
         </Text>
       </Center>
+      <Spacer />
+      <InputGroup size="md" maxWidth="500px">
+        <Input
+          size="lg"
+          placeholder="Search..."
+          variant="filled"
+          borderRadius="15px"
+        />
+        <InputRightElement>
+          <IconButton
+            margin="7.5px 15px 0 0"
+            borderRadius={'full'}
+            aria-label="Search"
+            icon={<FaSearch />}
+            color={'red.600'}
+          />
+        </InputRightElement>
+      </InputGroup>
 
       <Spacer />
       <HStack gap="10">
