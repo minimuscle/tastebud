@@ -48,6 +48,9 @@ Here's a roadmap for the next versions of Tastebud:
 - Mobile-Optimized Design
 - Error / Catch Boundary Implementation
 - Refactor Code
+- Convert to Typescript
+
+This major addition involves a complete redesign of the program, from the ground up. Because of this, a switch to Typescript is also going to take place, in order to better future-proof the content especially over time.
 
 ### 0.5
 

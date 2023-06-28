@@ -1,41 +1,93 @@
-import type { V2_MetaFunction } from "@remix-run/node";
+import { Box, Flex, HStack } from "@chakra-ui/react"
+import { useLoadScript } from "@react-google-maps/api"
+import type { ActionArgs, LinksFunction, LoaderFunction, V2_MetaFunction } from "@remix-run/node"
+import { json } from "@remix-run/node"
+import { Outlet, useLoaderData } from "@remix-run/react"
+import { createClient } from "@supabase/supabase-js"
+import { Suspense } from "react"
+import Categories from "~/components/layout/categories"
+import Header from "~/components/layout/header"
+import styles from '~/styles/global.css'
+import { Category } from "~/ts/interfaces/supabase_interfaces"
 
 export const meta: V2_MetaFunction = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
-  ];
-};
+    { title: "Map - Tastebud Reviews" },
+    { name: "description", content: "Welcome to Tastebud Reviews" },
+  ]
+}
+
+export const links: LinksFunction = () => {
+  return [{ rel: "stylesheet", href: styles }]
+}
+
+export const loader: LoaderFunction = async () => {
+  //setup supabase
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_KEY!
+  )
+  //get categories from supabase
+  const { data: categories, error }: { data: Category[] | null, error: any } = await supabase
+    .from('categories')
+    .select('*')
+  if (error) {
+    console.log(error)
+    return json({ error: 'Error fetching categories' }, { status: 500 })
+  }
+  return {
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY!,
+    categories: categories,
+  }
+}
+
+export const action = async ({ request }: ActionArgs) => {
+  const body = await request.formData()
+  const placeId = body.get('placeId')
+  console.log(placeId)
+
+  //search supabase for the placeId
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_KEY!
+  )
+  const { data: place, error }: { data: Location | null, error: any } = await supabase
+    .from('locations')
+    .select('*')
+    .eq('id', placeId)
+    .single()
+  if (error) {
+    console.log(error)
+    return json({ error: 'Error fetching place' }, { status: 500 })
+  }
+
+  return place
+}
 
 export default function Index() {
+  const loaderData = useLoaderData<LoaderData>()
+
+  interface LoaderData {
+    GOOGLE_MAPS_API_KEY: string
+    categories: Category[]
+  }
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: loaderData.GOOGLE_MAPS_API_KEY,
+  })
+
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1>Welcome to Remix</h1>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
-    </div>
-  );
+    <Flex flexDirection="column" height="100vh">
+      <Header />
+      <Categories categories={loaderData.categories} />
+      <Box flex="1">
+        <HStack height="100%" width="100%">
+          <Box width="1184px" height="100%"></Box>
+          <Suspense fallback={<div>Loading...</div>}>
+            {/* {isLoaded && <Map />} */}
+          </Suspense>
+        </HStack>
+      </Box>
+      <Outlet />
+    </Flex>
+  )
 }
