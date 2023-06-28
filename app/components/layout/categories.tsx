@@ -48,7 +48,7 @@ export default function Categories({ categories }: { categories: Category[] }) {
                                 padding="0 10px"
                                 color="gray.400"
                                 fontWeight="normal"
-                                _hover={{ color: 'red.600' }}
+                                _hover={{ color: 'red.600', backgroundColor: 'transparent' }}
                             >
                                 <VStack>
                                     <Icon boxSize={6} />

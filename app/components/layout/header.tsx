@@ -27,7 +27,7 @@ export default function Header() {
             <Center position="relative">
                 <Heading as="h1">
                     <Link href="/" _hover={{}}>
-                        Tastebud Reviews
+                        💋Tastebud Reviews
                     </Link>
                 </Heading>
                 <Text

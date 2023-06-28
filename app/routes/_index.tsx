@@ -7,6 +7,7 @@ import { createClient } from "@supabase/supabase-js"
 import { Suspense } from "react"
 import Categories from "~/components/layout/categories"
 import Header from "~/components/layout/header"
+import Map from "~/components/map/map"
 import styles from '~/styles/global.css'
 import { Category } from "~/ts/interfaces/supabase_interfaces"
 
@@ -83,7 +84,7 @@ export default function Index() {
         <HStack height="100%" width="100%">
           <Box width="1184px" height="100%"></Box>
           <Suspense fallback={<div>Loading...</div>}>
-            {/* {isLoaded && <Map />} */}
+            {isLoaded && <Map />}
           </Suspense>
         </HStack>
       </Box>
