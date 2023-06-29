@@ -62,10 +62,10 @@ export default function Header() {
 
             <Spacer />
             <HStack gap="10">
-                <Link fontSize="xl" href="/about">
+                <Link fontSize="md" href="/about">
                     About
                 </Link>
-                <Link fontSize="xl" href="/about">
+                <Link fontSize="md" href="/about">
                     Contact
                 </Link>
                 <Menu>

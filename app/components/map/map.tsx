@@ -21,6 +21,10 @@ export default function Map() {
             zoom={15}
             center={center}
             mapContainerClassName="map-container"
+            options={{
+                mapTypeControl: false,
+                streetViewControl: false,
+            }}
         >
             <MapComponents />
         </GoogleMap>

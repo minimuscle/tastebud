@@ -11,7 +11,7 @@ export default function MapComponents() {
     useEffect(() => {
         const listener = map!.addListener('click', async (event) => {
             if (event.placeId) {
-                console.log(typeof event.latLng)
+                console.log(event)
                 event.stop()
                 //Search for the place ID on supabase before attempting to render the popup
                 const placeId = event.placeId
@@ -38,7 +38,6 @@ export default function MapComponents() {
 
     return (
         <div>
-            mapComponents
             <MarkerF position={{ lat: -37.8148, lng: 144.9638 }} />
         </div>
     )
