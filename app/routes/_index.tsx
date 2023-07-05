@@ -4,12 +4,13 @@ import type { ActionArgs, LinksFunction, LoaderFunction, V2_MetaFunction } from 
 import { json } from "@remix-run/node"
 import { Outlet, useLoaderData } from "@remix-run/react"
 import { createClient } from "@supabase/supabase-js"
-import { Suspense } from "react"
+import { Suspense, useState } from "react"
 import Categories from "~/components/layout/categories"
 import Header from "~/components/layout/header"
 import Map from "~/components/map/map"
 import styles from '~/styles/global.css'
 import { Category } from "~/ts/interfaces/supabase_interfaces"
+import { motion } from "framer-motion"
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -67,6 +68,7 @@ export const action = async ({ request }: ActionArgs) => {
 
 export default function Index() {
   const loaderData = useLoaderData<LoaderData>()
+  const [drawerOpen, setDrawer] = useState<boolean>(true)
 
   interface LoaderData {
     GOOGLE_MAPS_API_KEY: string
@@ -82,13 +84,15 @@ export default function Index() {
       <Categories categories={loaderData.categories} />
       <Box flex="1">
         <HStack height="100%" width="100%">
-          <Box width="1184px" height="100%"></Box>
+          <motion.div>
+            <Box width="1184px" height="100%" display={drawerOpen ? 'true' : 'none'}><Outlet /></Box>
+          </motion.div>
           <Suspense fallback={<div>Loading...</div>}>
-            {isLoaded && <Map />}
+            {isLoaded && <Map drawer={{ drawerOpen, setDrawer }} />}
           </Suspense>
         </HStack>
       </Box>
-      <Outlet />
+
     </Flex>
   )
 }

@@ -1,3 +1,4 @@
+import { IconButton } from '@chakra-ui/react'
 import {
     GoogleMap,
     MarkerF,
@@ -9,8 +10,10 @@ import { useFetcher, useSearchParams } from '@remix-run/react/dist'
 import { useEffect, useMemo } from 'react'
 import MapComponents from '~/components/map/mapComponents'
 import { LatLng } from '~/ts/interfaces/maps_interfaces'
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import type { Dispatch, SetStateAction } from 'react'
 
-export default function Map() {
+export default function Map({ drawer }: { drawer: { drawerOpen: boolean, setDrawer: Dispatch<SetStateAction<boolean>> } }) {
     const [searchParams, setSearchParams] = useSearchParams()
     const lat = searchParams.get('lat') || -37.8148
     const lng = searchParams.get('lng') || 144.9638
@@ -26,6 +29,7 @@ export default function Map() {
                 streetViewControl: false,
             }}
         >
+            <IconButton aria-label="Hide Menu" icon={drawer.drawerOpen ? <FaChevronLeft /> : <FaChevronRight />} onClick={() => drawer.setDrawer(!drawer.drawerOpen)} />
             <MapComponents />
         </GoogleMap>
     )
