@@ -9,6 +9,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import AppTheme from "./styles/AppTheme";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -24,10 +25,10 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <ChakraProvider>
-        <Outlet />
+        <ChakraProvider theme={AppTheme}>
+          <Outlet />
         </ChakraProvider>
-        
+
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
