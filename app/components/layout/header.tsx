@@ -18,10 +18,46 @@ import {
     Spacer,
     SystemStyleObject,
     Text,
+    VStack,
+    useMediaQuery,
 } from '@chakra-ui/react'
 import { FaSearch } from 'react-icons/fa'
 
 export default function Header() {
+    const [smallerThan768] = useMediaQuery('(max-width: 768px)')
+
+    if (smallerThan768) {
+        return (
+            <Center>
+                <VStack width='100%'>
+                    <Heading as="h1" size={['lg', 'xl']} paddingTop='10px'>
+                        <Link href="/" _hover={{}}>
+                            💋Tastebud Reviews
+                        </Link>
+                    </Heading>
+                    <InputGroup padding='0px 50px'>
+                        <Input
+                            size='lg'
+                            fontSize='md'
+                            placeholder="Search for food..."
+                            variant="filled"
+                            borderRadius="15px"
+                        />
+                        <InputRightElement>
+                            <IconButton
+                                margin="7.5px 115px 0 0"
+                                borderRadius={'15px'}
+                                aria-label="Search"
+                                icon={<FaSearch />}
+                                color={'red.600'}
+                                backgroundColor={'transparent'}
+                            />
+                        </InputRightElement>
+                    </InputGroup>
+                </VStack>
+            </Center>
+        )
+    }
     return (
         <Flex height="80px" p="15px 50px">
             <Center position="relative">
