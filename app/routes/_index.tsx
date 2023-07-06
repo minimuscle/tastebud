@@ -1,4 +1,4 @@
-import { Box, Flex, HStack } from "@chakra-ui/react"
+import { Box, Button, Center, Flex, HStack, useMediaQuery } from "@chakra-ui/react"
 import { useLoadScript } from "@react-google-maps/api"
 import type { ActionArgs, LinksFunction, LoaderFunction, V2_MetaFunction } from "@remix-run/node"
 import { json } from "@remix-run/node"
@@ -69,6 +69,7 @@ export const action = async ({ request }: ActionArgs) => {
 export default function Index() {
   const loaderData = useLoaderData<LoaderData>()
   const [drawerOpen, setDrawer] = useState<boolean>(true)
+  const [isSmallerThan768] = useMediaQuery('(max-width: 768px)')
 
   interface LoaderData {
     GOOGLE_MAPS_API_KEY: string
@@ -82,16 +83,26 @@ export default function Index() {
     <Flex flexDirection="column" height="100vh">
       <Header />
       {/* <Categories categories={loaderData.categories} /> */}
-      <Box flex="1">
-        <HStack height="100%" width="100%">
-          <motion.div>
-            <Box width="1184px" height="100%" display={drawerOpen ? 'true' : 'none'}><Outlet /></Box>
-          </motion.div>
-          <Suspense fallback={<div>Loading...</div>}>
-            {isLoaded && <Map drawer={{ drawerOpen, setDrawer }} />}
-          </Suspense>
-        </HStack>
-      </Box>
+      {isSmallerThan768 ?
+        <Box flex="1" position='relative' paddingTop='20px'>
+          <Outlet />
+          {isLoaded && drawerOpen && <Map drawer={{ drawerOpen, setDrawer }} />}
+          <Center>
+            <Button colorScheme="yellow" position='absolute' bottom='15px' onClick={() => setDrawer(!drawerOpen)}>{drawerOpen ? "Hide" : "Show"} Map</Button>
+          </Center>
+        </Box>
+        :
+        <Box flex="1">
+          <HStack height="100%" width="100%">
+            <motion.div>
+              <Box width="1184px" height="100%" display={drawerOpen ? 'true' : 'none'}><Outlet /></Box>
+            </motion.div>
+            <Suspense fallback={<div>Loading...</div>}>
+              {isLoaded && <Map drawer={{ drawerOpen, setDrawer }} />}
+            </Suspense>
+          </HStack>
+        </Box>}
+
 
     </Flex>
   )

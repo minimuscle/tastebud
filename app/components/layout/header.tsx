@@ -35,7 +35,7 @@ export default function Header() {
                             💋Tastebud Reviews
                         </Link>
                     </Heading>
-                    <InputGroup padding='0px 50px'>
+                    <InputGroup padding='0px 50px 0px 50px'>
                         <Input
                             size='lg'
                             fontSize='md'
