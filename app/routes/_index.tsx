@@ -81,7 +81,7 @@ export default function Index() {
   return (
     <Flex flexDirection="column" height="100vh">
       <Header />
-      <Categories categories={loaderData.categories} />
+      {/* <Categories categories={loaderData.categories} /> */}
       <Box flex="1">
         <HStack height="100%" width="100%">
           <motion.div>
