@@ -80,7 +80,7 @@ export default function Index() {
   })
 
   return (
-    <Flex flexDirection="column" height="100vh">
+    <Flex flexDirection="column" height="100dvh">
       <Header />
       {/* <Categories categories={loaderData.categories} /> */}
       {isSmallerThan768 ?
