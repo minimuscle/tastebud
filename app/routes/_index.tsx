@@ -1,6 +1,19 @@
-import { Box, Button, Center, Flex, HStack, IconButton, useMediaQuery } from "@chakra-ui/react"
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  HStack,
+  IconButton,
+  useMediaQuery,
+} from "@chakra-ui/react"
 import { useLoadScript } from "@react-google-maps/api"
-import type { ActionArgs, LinksFunction, LoaderFunction, V2_MetaFunction } from "@remix-run/node"
+import type {
+  ActionArgs,
+  LinksFunction,
+  LoaderFunction,
+  V2_MetaFunction,
+} from "@remix-run/node"
 import { json } from "@remix-run/node"
 import { Outlet, useLoaderData } from "@remix-run/react"
 import { createClient } from "@supabase/supabase-js"
@@ -8,7 +21,7 @@ import { Suspense, useState } from "react"
 import Categories from "~/components/layout/categories"
 import Header from "~/components/layout/header"
 import Map from "~/components/map/map"
-import styles from '~/styles/global.css'
+import styles from "~/styles/global.css"
 import { Category } from "~/ts/interfaces/supabase_interfaces"
 import { motion } from "framer-motion"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
@@ -31,12 +44,11 @@ export const loader: LoaderFunction = async () => {
     process.env.SUPABASE_KEY!
   )
   //get categories from supabase
-  const { data: categories, error }: { data: Category[] | null, error: any } = await supabase
-    .from('categories')
-    .select('*')
+  const { data: categories, error }: { data: Category[] | null; error: any } =
+    await supabase.from("categories").select("*")
   if (error) {
     console.log(error)
-    return json({ error: 'Error fetching categories' }, { status: 500 })
+    return json({ error: "Error fetching categories" }, { status: 500 })
   }
   return {
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY!,
@@ -46,7 +58,7 @@ export const loader: LoaderFunction = async () => {
 
 export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData()
-  const placeId = body.get('placeId')
+  const placeId = body.get("placeId")
   console.log(placeId)
 
   //search supabase for the placeId
@@ -54,14 +66,11 @@ export const action = async ({ request }: ActionArgs) => {
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_KEY!
   )
-  const { data: place, error }: { data: Location | null, error: any } = await supabase
-    .from('locations')
-    .select('*')
-    .eq('id', placeId)
-    .single()
+  const { data: place, error }: { data: Location | null; error: any } =
+    await supabase.from("locations").select("*").eq("id", placeId).single()
   if (error) {
     console.log(error)
-    return json({ error: 'Error fetching place' }, { status: 500 })
+    return json({ error: "Error fetching place" }, { status: 500 })
   }
 
   return place
@@ -70,7 +79,7 @@ export const action = async ({ request }: ActionArgs) => {
 export default function Index() {
   const loaderData = useLoaderData<LoaderData>()
   const [drawerOpen, setDrawer] = useState<boolean>(true)
-  const [isSmallerThan768] = useMediaQuery('(max-width: 768px)')
+  const [isSmallerThan768] = useMediaQuery("(max-width: 768px)")
 
   interface LoaderData {
     GOOGLE_MAPS_API_KEY: string
@@ -81,29 +90,61 @@ export default function Index() {
   })
 
   return (
-    <Flex flexDirection="column" height="100dvh">
+    <Flex
+      flexDirection='column'
+      height='100dvh'
+    >
       <Header />
       {/* <Categories categories={loaderData.categories} /> */}
-      {isSmallerThan768 ?
-        <Box flex="1" position='relative' paddingTop='20px'>
+      {isSmallerThan768 ? (
+        <Box
+          flex='1'
+          position='relative'
+          paddingTop='20px'
+        >
           <Outlet />
           {isLoaded && drawerOpen && <Map />}
           <Center>
-            <Button colorScheme="yellow" position='absolute' bottom='15px' onClick={() => setDrawer(!drawerOpen)}>{drawerOpen ? "Hide" : "Show"} Map</Button>
+            <Button
+              colorScheme='yellow'
+              position='absolute'
+              bottom='15px'
+              onClick={() => setDrawer(!drawerOpen)}
+            >
+              {drawerOpen ? "Hide" : "Show"} Map
+            </Button>
           </Center>
         </Box>
-        :
-        <Box flex="1">
-          <HStack height="100%" width="100%" position='relative'>
+      ) : (
+        <Box flex='1'>
+          <HStack
+            height='100%'
+            width='100%'
+            position='relative'
+          >
             <motion.div>
-              <Box width={["800px"]} height="100%" display={drawerOpen ? 'true' : 'none'}><Outlet /></Box>
+              <Box
+                width={["800px"]}
+                height='100%'
+                display={drawerOpen ? "true" : "none"}
+              >
+                <Outlet />
+              </Box>
             </motion.div>
             {isLoaded && <Map />}
-            <IconButton zIndex='-5px' position='absolute' colorScheme="red" top='10px' left={drawerOpen ? ["815px"] : ['15px']} aria-label="Hide Menu" icon={drawerOpen ? <FaChevronLeft /> : <FaChevronRight />} onClick={() => setDrawer(!drawerOpen)} />
+            <IconButton
+              zIndex='-5px'
+              position='absolute'
+              colorScheme='red'
+              top='10px'
+              left={drawerOpen ? ["815px"] : ["15px"]}
+              aria-label='Hide Menu'
+              icon={drawerOpen ? <FaChevronLeft /> : <FaChevronRight />}
+              onClick={() => setDrawer(!drawerOpen)}
+            />
           </HStack>
-        </Box>}
-
-
+        </Box>
+      )}
     </Flex>
   )
 }
