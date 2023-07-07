@@ -13,7 +13,7 @@ import { LatLng } from '~/ts/interfaces/maps_interfaces'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import type { Dispatch, SetStateAction } from 'react'
 
-export default function Map({ drawer }: { drawer: { drawerOpen: boolean, setDrawer: Dispatch<SetStateAction<boolean>> } }) {
+export default function Map() {
     const [searchParams, setSearchParams] = useSearchParams()
     const lat = searchParams.get('lat') || -37.8148
     const lng = searchParams.get('lng') || 144.9638
@@ -29,7 +29,6 @@ export default function Map({ drawer }: { drawer: { drawerOpen: boolean, setDraw
                 streetViewControl: false,
             }}
         >
-            <IconButton aria-label="Hide Menu" icon={drawer.drawerOpen ? <FaChevronLeft /> : <FaChevronRight />} onClick={() => drawer.setDrawer(!drawer.drawerOpen)} />
             <MapComponents />
         </GoogleMap>
     )

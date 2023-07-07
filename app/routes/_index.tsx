@@ -1,4 +1,4 @@
-import { Box, Button, Center, Flex, HStack, useMediaQuery } from "@chakra-ui/react"
+import { Box, Button, Center, Flex, HStack, IconButton, useMediaQuery } from "@chakra-ui/react"
 import { useLoadScript } from "@react-google-maps/api"
 import type { ActionArgs, LinksFunction, LoaderFunction, V2_MetaFunction } from "@remix-run/node"
 import { json } from "@remix-run/node"
@@ -11,6 +11,7 @@ import Map from "~/components/map/map"
 import styles from '~/styles/global.css'
 import { Category } from "~/ts/interfaces/supabase_interfaces"
 import { motion } from "framer-motion"
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -86,20 +87,19 @@ export default function Index() {
       {isSmallerThan768 ?
         <Box flex="1" position='relative' paddingTop='20px'>
           <Outlet />
-          {isLoaded && drawerOpen && <Map drawer={{ drawerOpen, setDrawer }} />}
+          {isLoaded && drawerOpen && <Map />}
           <Center>
             <Button colorScheme="yellow" position='absolute' bottom='15px' onClick={() => setDrawer(!drawerOpen)}>{drawerOpen ? "Hide" : "Show"} Map</Button>
           </Center>
         </Box>
         :
         <Box flex="1">
-          <HStack height="100%" width="100%">
+          <HStack height="100%" width="100%" position='relative'>
             <motion.div>
-              <Box width="1184px" height="100%" display={drawerOpen ? 'true' : 'none'}><Outlet /></Box>
+              <Box width={["800px"]} height="100%" display={drawerOpen ? 'true' : 'none'}><Outlet /></Box>
             </motion.div>
-            <Suspense fallback={<div>Loading...</div>}>
-              {isLoaded && <Map drawer={{ drawerOpen, setDrawer }} />}
-            </Suspense>
+            {isLoaded && <Map />}
+            <IconButton zIndex='-5px' position='absolute' colorScheme="red" top='10px' left={drawerOpen ? ["815px"] : ['15px']} aria-label="Hide Menu" icon={drawerOpen ? <FaChevronLeft /> : <FaChevronRight />} onClick={() => setDrawer(!drawerOpen)} />
           </HStack>
         </Box>}
 
