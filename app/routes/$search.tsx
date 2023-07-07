@@ -13,6 +13,7 @@ import type {
   LinksFunction,
   V2_MetaFunction,
   LoaderFunction,
+  LoaderArgs,
 } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { Outlet, useLoaderData } from '@remix-run/react'
@@ -37,7 +38,24 @@ export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: styles }]
 }
 
-export const loader: LoaderFunction = async () => {
+export const ErrorBoundary = ({ error }: { error: any }) => {
+  return (
+    <Center>
+      <Box>
+        <h1>Oh no, something went wrong!</h1>
+        <pre>{error}</pre>
+      </Box>
+    </Center>
+  )
+}
+
+export const loader: LoaderFunction = async ({
+  params,
+  request,
+}: LoaderArgs) => {
+  const { search } = params
+  console.log(params.search)
+  console.log(request.url)
   //setup supabase
   const supabase = createClient(
     process.env.SUPABASE_URL!,
@@ -45,11 +63,14 @@ export const loader: LoaderFunction = async () => {
   )
   //get categories from supabase
   const { data: categories, error }: { data: Category[] | null; error: any } =
-    await supabase.from('categories').select('*')
+    search === 'all'
+      ? await supabase.from('categories').select('*')
+      : await supabase.from('categories').select('*').eq('value', search)
   if (error) {
     console.log(error)
     return json({ error: 'Error fetching categories' }, { status: 500 })
   }
+  console.log(categories)
   return {
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY!,
     categories: categories,
@@ -82,8 +103,12 @@ export default function Search() {
   const [isSmallerThan768] = useMediaQuery('(max-width: 768px)')
 
   interface LoaderData {
+    error: any
     GOOGLE_MAPS_API_KEY: string
     categories: Category[]
+  }
+  if (loaderData.error) {
+    throw new Error(loaderData.error)
   }
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: loaderData.GOOGLE_MAPS_API_KEY,
