@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
   Box,
   Button,
@@ -23,9 +24,10 @@ import Categories from '~/components/layout/categories'
 import Header from '~/components/layout/header'
 import Map from '~/components/map/map'
 import styles from '~/styles/global.css'
-import { Category } from '~/ts/interfaces/supabase_interfaces'
+import type { Category } from '~/ts/interfaces/supabase_interfaces'
 import { motion } from 'framer-motion'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import InfoPanel from '~/components/infoPanel/infoPanel'
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -63,17 +65,28 @@ export const loader: LoaderFunction = async ({
   )
   //get categories from supabase
   const { data: categories, error }: { data: Category[] | null; error: any } =
-    search === 'all'
-      ? await supabase.from('categories').select('*')
-      : await supabase.from('categories').select('*').eq('value', search)
+    await supabase.from('categories').select('*')
   if (error) {
     console.log(error)
     return json({ error: 'Error fetching categories' }, { status: 500 })
   }
-  console.log(categories)
+
+  const {
+    data: selected,
+    error: selected_error,
+  }: { data: Category[] | null; error: unknown } =
+    search === 'all'
+      ? await supabase.from('categories').select('*')
+      : await supabase.from('categories').select('*').eq('value', search)
+  if (selected_error) {
+    console.log(selected_error)
+    return json({ error: 'Error fetching categories' }, { status: 500 })
+  }
+  console.log(selected)
   return {
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY!,
     categories: categories,
+    selected: selected,
   }
 }
 
@@ -103,9 +116,10 @@ export default function Search() {
   const [isSmallerThan768] = useMediaQuery('(max-width: 768px)')
 
   interface LoaderData {
-    error: any
+    error: unknown
     GOOGLE_MAPS_API_KEY: string
     categories: Category[]
+    selected: Category[]
   }
   if (loaderData.error) {
     throw new Error(loaderData.error)
@@ -119,13 +133,13 @@ export default function Search() {
       height="100dvh"
     >
       <Header />
-      {/* <Categories categories={loaderData.categories} /> */}
+      <Categories categories={loaderData.categories} />
       {isSmallerThan768 ? (
         <Box
           flex="1"
           position="relative"
-          paddingTop="20px"
         >
+          {!drawerOpen && <InfoPanel selectedCategory={loaderData.selected} />}
           {isLoaded && drawerOpen && <Map />}
           <Center>
             <Button
@@ -140,10 +154,11 @@ export default function Search() {
         </Box>
       ) : (
         <Box flex="1">
-          <HStack
+          <Flex
             height="100%"
             width="100%"
             position="relative"
+            gap={0}
           >
             <motion.div>
               <Box
@@ -151,7 +166,7 @@ export default function Search() {
                 height="100%"
                 display={drawerOpen ? 'true' : 'none'}
               >
-                <Outlet />
+                <InfoPanel selectedCategory={loaderData.selected} />
               </Box>
             </motion.div>
             {isLoaded && <Map />}
@@ -165,7 +180,7 @@ export default function Search() {
               icon={drawerOpen ? <FaChevronLeft /> : <FaChevronRight />}
               onClick={() => setDrawer(!drawerOpen)}
             />
-          </HStack>
+          </Flex>
         </Box>
       )}
     </Flex>
