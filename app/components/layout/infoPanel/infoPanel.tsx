@@ -12,7 +12,7 @@ export default function InfoPanel({
   return (
     <>
       <Heading>Category: {selectedCategory[0].label}</Heading>
-      <LocationCard location={locations[0]} />
+      {/* <LocationCard location={locations[0]} /> */}
     </>
   )
 }

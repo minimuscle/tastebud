@@ -58,7 +58,7 @@ export const loader: LoaderFunction = async ({
   const { search } = params
   const url = new URL(request.url)
   const category = url.searchParams.get('category')
-  console.log(category)
+
   //setup supabase
   const supabase = createClient(
     process.env.SUPABASE_URL!,
@@ -76,33 +76,39 @@ export const loader: LoaderFunction = async ({
   const {
     data: locations,
     error: locations_error,
-  }: { data: Location[] | null; error: unknown } = await supabase
-    .from('locations')
-    .select()
-    .contains('category', [category])
+  }: { data: Location[] | null; error: unknown } =
+    category === 'all'
+      ? await supabase.from('categories').select('*')
+      : await supabase
+          .from('locations')
+          .select()
+          .contains('category', [category])
 
   if (locations_error) {
     console.log(locations_error)
     return json({ error: 'Error fetching locations' }, { status: 500 })
   }
+
+  //get the selected categories
   const {
     data: selected,
     error: selected_error,
   }: { data: Category[] | null; error: unknown } =
-    search === 'all'
+    category === 'all'
       ? await supabase.from('categories').select('*')
-      : await supabase.from('categories').select('*').eq('value', search)
+      : await supabase.from('categories').select('*').eq('value', category)
   if (selected_error) {
     console.log(selected_error)
     return json({ error: 'Error fetching categories' }, { status: 500 })
   }
-  console.log('locations: ', locations)
-  return {
+  const returnData = {
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY!,
     categories: categories,
     selected: selected,
     locations: locations,
   }
+  console.log('return data: ', returnData.locations)
+  return returnData
 }
 
 export const action = async ({ request }: ActionArgs) => {
@@ -187,10 +193,10 @@ export default function Index() {
                 height="100%"
                 display={drawerOpen ? 'true' : 'none'}
               >
-                {/* <InfoPanel
+                <InfoPanel
                   selectedCategory={loaderData.selected}
                   locations={loaderData.locations}
-                /> */}
+                />
               </Box>
             </motion.div>
             {isLoaded && <Map />}
