@@ -13,7 +13,7 @@ import Rating from 'react-rating'
 import type { Category, Location } from '~/ts/interfaces/supabase_interfaces'
 
 export default function LocationCard({ location }: { location: Location }) {
-  const { categories } = useLoaderData()
+  const { categories } = useLoaderData<{ categories: Category[] }>()
   return (
     <Card>
       <CardBody>

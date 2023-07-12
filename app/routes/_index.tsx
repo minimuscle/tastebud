@@ -161,12 +161,7 @@ export default function Index() {
           flex="1"
           position="relative"
         >
-          {!drawerOpen && (
-            <InfoPanel
-              categories={loaderData.categories}
-              locations={loaderData.locations}
-            />
-          )}
+          {!drawerOpen && <InfoPanel />}
           {isLoaded && drawerOpen && <Map />}
           <Center>
             <Button
@@ -193,10 +188,7 @@ export default function Index() {
                 height="100%"
                 display={drawerOpen ? 'true' : 'none'}
               >
-                <InfoPanel
-                  categories={loaderData.categories}
-                  locations={loaderData.locations}
-                />
+                <InfoPanel />
               </Box>
             </motion.div>
             {isLoaded && <Map />}
