@@ -24,10 +24,10 @@ import Categories from '~/components/layout/categories'
 import Header from '~/components/layout/header'
 import Map from '~/components/map/map'
 import styles from '~/styles/global.css'
-import type { Category } from '~/ts/interfaces/supabase_interfaces'
+import type { Category, Location } from '~/ts/interfaces/supabase_interfaces'
 import { motion } from 'framer-motion'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
-import InfoPanel from '~/components/infoPanel/infoPanel'
+import InfoPanel from '~/components/layout/infoPanel/infoPanel'
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -56,8 +56,9 @@ export const loader: LoaderFunction = async ({
   request,
 }: LoaderArgs) => {
   const { search } = params
-  console.log(params.search)
-  console.log(request.url)
+  const url = new URL(request.url)
+  const category = url.searchParams.get('category')
+  console.log(category)
   //setup supabase
   const supabase = createClient(
     process.env.SUPABASE_URL!,
@@ -71,6 +72,19 @@ export const loader: LoaderFunction = async ({
     return json({ error: 'Error fetching categories' }, { status: 500 })
   }
 
+  //get locations based on category chosen (in search params)
+  const {
+    data: locations,
+    error: locations_error,
+  }: { data: Location[] | null; error: unknown } = await supabase
+    .from('locations')
+    .select()
+    .contains('category', [category])
+
+  if (locations_error) {
+    console.log(locations_error)
+    return json({ error: 'Error fetching locations' }, { status: 500 })
+  }
   const {
     data: selected,
     error: selected_error,
@@ -82,11 +96,12 @@ export const loader: LoaderFunction = async ({
     console.log(selected_error)
     return json({ error: 'Error fetching categories' }, { status: 500 })
   }
-  console.log(selected)
+  console.log('locations: ', locations)
   return {
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY!,
     categories: categories,
     selected: selected,
+    locations: locations,
   }
 }
 
@@ -120,6 +135,7 @@ export default function Search() {
     GOOGLE_MAPS_API_KEY: string
     categories: Category[]
     selected: Category[]
+    locations: Location[]
   }
   if (loaderData.error) {
     throw new Error(loaderData.error)
@@ -139,7 +155,12 @@ export default function Search() {
           flex="1"
           position="relative"
         >
-          {!drawerOpen && <InfoPanel selectedCategory={loaderData.selected} />}
+          {!drawerOpen && (
+            <InfoPanel
+              selectedCategory={loaderData.selected}
+              locations={loaderData.locations}
+            />
+          )}
           {isLoaded && drawerOpen && <Map />}
           <Center>
             <Button
@@ -166,7 +187,10 @@ export default function Search() {
                 height="100%"
                 display={drawerOpen ? 'true' : 'none'}
               >
-                <InfoPanel selectedCategory={loaderData.selected} />
+                <InfoPanel
+                  selectedCategory={loaderData.selected}
+                  locations={loaderData.locations}
+                />
               </Box>
             </motion.div>
             {isLoaded && <Map />}
