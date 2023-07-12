@@ -1,4 +1,4 @@
-import { Box, Heading } from '@chakra-ui/react'
+import { Box, Heading, SimpleGrid } from '@chakra-ui/react'
 import LocationCard from '~/components/locationCard/LocationCard'
 import type { Category, Location } from '~/ts/interfaces/supabase_interfaces'
 
@@ -10,9 +10,17 @@ export default function InfoPanel({
   locations: Location[]
 }) {
   return (
-    <>
-      <Heading>Category: {selectedCategory[0].label}</Heading>
-      {/* <LocationCard location={locations[0]} /> */}
-    </>
+    <SimpleGrid
+      columns={[1, 1, 1, 2, null, 3]}
+      spacing={'20px'}
+      margin={'20px'}
+    >
+      {locations.map((location) => (
+        <LocationCard
+          key={location.id}
+          location={location}
+        />
+      ))}
+    </SimpleGrid>
   )
 }

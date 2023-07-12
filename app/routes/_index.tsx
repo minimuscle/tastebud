@@ -78,7 +78,7 @@ export const loader: LoaderFunction = async ({
     error: locations_error,
   }: { data: Location[] | null; error: unknown } =
     category === 'all'
-      ? await supabase.from('categories').select('*')
+      ? await supabase.from('locations').select('*')
       : await supabase
           .from('locations')
           .select()
@@ -161,12 +161,12 @@ export default function Index() {
           flex="1"
           position="relative"
         >
-          {/* {!drawerOpen && (
+          {!drawerOpen && (
             <InfoPanel
               selectedCategory={loaderData.selected}
               locations={loaderData.locations}
             />
-          )}*/}
+          )}
           {isLoaded && drawerOpen && <Map />}
           <Center>
             <Button
@@ -189,7 +189,7 @@ export default function Index() {
           >
             <motion.div>
               <Box
-                width={['800px']}
+                width="45vw"
                 height="100%"
                 display={drawerOpen ? 'true' : 'none'}
               >
@@ -205,7 +205,7 @@ export default function Index() {
               position="absolute"
               colorScheme="red"
               top="10px"
-              left={drawerOpen ? ['815px'] : ['15px']}
+              left={drawerOpen ? ['45.5vw'] : ['15px']}
               aria-label="Hide Menu"
               icon={drawerOpen ? <FaChevronLeft /> : <FaChevronRight />}
               onClick={() => setDrawer(!drawerOpen)}
