@@ -1,11 +1,26 @@
-import { Card, CardBody, CardHeader, Heading, Text } from '@chakra-ui/react'
-import type { Location } from '~/ts/interfaces/supabase_interfaces'
+import {
+  Badge,
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Heading,
+  Text,
+} from '@chakra-ui/react'
+import type { Category, Location } from '~/ts/interfaces/supabase_interfaces'
 
-export default function LocationCard({ location }: { location: Location }) {
+export default function LocationCard({
+  location,
+  categories,
+}: {
+  location: Location
+  categories: Category[]
+}) {
   return (
     <Card>
-      <CardHeader>{/* This is going to be the tags */}</CardHeader>
       <CardBody>
+        <Text>* * * * 3 / 5 (Reviews)</Text>
+        <br />
         <Heading
           size="xs"
           textTransform="uppercase"
@@ -19,6 +34,23 @@ export default function LocationCard({ location }: { location: Location }) {
         >
           {location.address}
         </Text>
+        <Divider pt="2" />
+        {location.category?.map((category, key) => {
+          const badge = categories.find((cat) => cat.value === category)
+          return (
+            <>
+              <Badge
+                key={key}
+                variant="subtle"
+                //colorScheme="teal"
+                marginRight={'10px'}
+              >
+                {badge?.label}
+              </Badge>
+            </>
+          )
+        })}
+        {/* <Text color={'blue.500'}>See More...</Text> */}
       </CardBody>
     </Card>
   )

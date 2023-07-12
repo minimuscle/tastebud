@@ -163,7 +163,7 @@ export default function Index() {
         >
           {!drawerOpen && (
             <InfoPanel
-              selectedCategory={loaderData.selected}
+              categories={loaderData.categories}
               locations={loaderData.locations}
             />
           )}
@@ -194,7 +194,7 @@ export default function Index() {
                 display={drawerOpen ? 'true' : 'none'}
               >
                 <InfoPanel
-                  selectedCategory={loaderData.selected}
+                  categories={loaderData.categories}
                   locations={loaderData.locations}
                 />
               </Box>
