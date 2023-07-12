@@ -7,17 +7,13 @@ import {
   Heading,
   Text,
 } from '@chakra-ui/react'
+import { useLoaderData } from '@remix-run/react'
 import { BsStarFill } from 'react-icons/bs'
 import Rating from 'react-rating'
 import type { Category, Location } from '~/ts/interfaces/supabase_interfaces'
 
-export default function LocationCard({
-  location,
-  categories,
-}: {
-  location: Location
-  categories: Category[]
-}) {
+export default function LocationCard({ location }: { location: Location }) {
+  const { categories } = useLoaderData()
   return (
     <Card>
       <CardBody>
