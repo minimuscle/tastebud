@@ -54,7 +54,10 @@ export default function LocationCard({
         >
           {location.address}
         </Text>
-        <Divider pt="2" />
+        <Divider
+          pt="2"
+          mb="2"
+        />
         {location.category?.map((category, key) => {
           const badge = categories.find((cat) => cat.value === category)
           return (
