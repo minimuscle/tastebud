@@ -7,6 +7,8 @@ import {
   Heading,
   Text,
 } from '@chakra-ui/react'
+import { BsStarFill } from 'react-icons/bs'
+import Rating from 'react-rating'
 import type { Category, Location } from '~/ts/interfaces/supabase_interfaces'
 
 export default function LocationCard({
@@ -19,8 +21,26 @@ export default function LocationCard({
   return (
     <Card>
       <CardBody>
-        <Text>* * * * 3 / 5 (Reviews)</Text>
-        <br />
+        <Text>
+          <Rating
+            initialRating={3}
+            readonly
+            fractions={2}
+            emptySymbol={
+              <BsStarFill
+                size="18px"
+                color="#d6d6d6"
+              />
+            }
+            fullSymbol={
+              <BsStarFill
+                size="18px"
+                color="#ffd500"
+              />
+            }
+          />{' '}
+          (0) 123 Reviews
+        </Text>
         <Heading
           size="xs"
           textTransform="uppercase"
