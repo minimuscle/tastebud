@@ -16,6 +16,7 @@ import {
   type V2_MetaFunction,
 } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
+import type { V2_MetaArgs } from '@remix-run/react'
 import { BsStarFill } from 'react-icons/bs'
 import Rating from 'react-rating'
 import SmallHeader from '~/components/layout/smallHeader'
@@ -61,9 +62,9 @@ export const loader: LoaderFunction = async ({ params }: LoaderArgs) => {
   return returnData
 }
 
-export const meta: V2_MetaFunction = () => {
+export const meta: V2_MetaFunction = ({ data }: { data: V2_MetaArgs }) => {
   return [
-    { title: 'Location - Tastebud Reviews' },
+    { title: `${data.location.name} - Tastebud Reviews` },
     { name: 'description', content: 'Welcome to Tastebud Reviews' },
   ]
 }

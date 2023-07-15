@@ -59,7 +59,7 @@ export const supabaseSelectWhereSingle = async (
 export const supabaseSelectContains = async (
   table: string,
   column: string,
-  value: string[]
+  value: string
 ) => {
   const { data, error } = await supabase
     .from(table)

@@ -27,6 +27,11 @@ import type { Category, Location } from '~/ts/interfaces/supabase_interfaces'
 import { motion } from 'framer-motion'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import InfoPanel from '~/components/layout/infoPanel/infoPanel'
+import {
+  supabaseSelectAll,
+  supabaseSelectContains,
+  supabaseSelectWhere,
+} from '~/util/database/supabase'
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -50,63 +55,28 @@ export const ErrorBoundary = ({ error }: { error: any }) => {
   )
 }
 
-export const loader: LoaderFunction = async ({
-  params,
-  request,
-}: LoaderArgs) => {
-  //const { search } = params
+export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
   const url = new URL(request.url)
-  const category = url.searchParams.get('category')
+  const category = url.searchParams.get('category') || 'all'
 
-  //setup supabase
-  const supabase = createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_KEY!
-  )
   //get categories from supabase
-  const { data: categories, error }: { data: Category[] | null; error: any } =
-    await supabase.from('categories').select('*')
-  if (error) {
-    console.log(error)
-    return json({ error: 'Error fetching categories' }, { status: 500 })
-  }
+  const categories = await supabaseSelectAll('categories')
 
   //get locations based on category chosen (in search params)
-  const {
-    data: locations,
-    error: locations_error,
-  }: { data: Location[] | null; error: unknown } =
+  const locations =
     category === 'all'
-      ? await supabase.from('locations').select('*')
-      : await supabase
-          .from('locations')
-          .select()
-          .contains('category', [category])
-
-  if (locations_error) {
-    console.log(locations_error)
-    return json({ error: 'Error fetching locations' }, { status: 500 })
-  }
+      ? await supabaseSelectAll('locations')
+      : await supabaseSelectContains('locations', 'category', category)
 
   //get the selected categories
-  const {
-    data: selected,
-    error: selected_error,
-  }: { data: Category[] | null; error: unknown } =
-    category === 'all'
-      ? await supabase.from('categories').select('*')
-      : await supabase.from('categories').select('*').eq('value', category)
-  if (selected_error) {
-    console.log(selected_error)
-    return json({ error: 'Error fetching categories' }, { status: 500 })
-  }
+  const selected = await supabaseSelectWhere('categories', 'value', category)
+
   const returnData = {
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY!,
     categories: categories,
     selected: selected,
     locations: locations,
   }
-  console.log('return data: ', returnData.locations)
   return returnData
 }
 
@@ -142,6 +112,7 @@ export default function Index() {
     selected: Category[]
     locations: Location[]
   }
+
   if (loaderData.error) {
     throw new Error(loaderData.error)
   }
