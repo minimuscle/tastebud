@@ -2,12 +2,13 @@ import {
   Badge,
   Card,
   CardBody,
-  CardHeader,
+  CardFooter,
   Divider,
   Heading,
+  Link,
   Text,
 } from '@chakra-ui/react'
-import { useLoaderData } from '@remix-run/react'
+import { useLoaderData, Link as remixLink } from '@remix-run/react'
 import { BsStarFill } from 'react-icons/bs'
 import Rating from 'react-rating'
 import type { Category, Location } from '~/ts/interfaces/supabase_interfaces'
@@ -18,6 +19,8 @@ export default function LocationCard({ location }: { location: Location }) {
     <Card>
       <CardBody>
         <Text>
+          {/** Disable Typescript for component below
+           * @ts-ignore */}
           <Rating
             initialRating={3}
             readonly
@@ -57,20 +60,28 @@ export default function LocationCard({ location }: { location: Location }) {
         {location.category?.map((category, key) => {
           const badge = categories.find((cat) => cat.value === category)
           return (
-            <>
-              <Badge
-                key={key}
-                variant="subtle"
-                //colorScheme="teal"
-                marginRight={'10px'}
-              >
-                {badge?.label}
-              </Badge>
-            </>
+            <Badge
+              key={key}
+              variant="subtle"
+              //colorScheme="teal"
+              marginRight={'10px'}
+            >
+              {badge?.label}
+            </Badge>
           )
         })}
         {/* <Text color={'blue.500'}>See More...</Text> */}
       </CardBody>
+      <CardFooter justify={'right'}>
+        <Link
+          as={remixLink}
+          to={`/location/${location.id}`}
+          target="_blank"
+          color={'red.600'}
+        >
+          Read More
+        </Link>
+      </CardFooter>
     </Card>
   )
 }

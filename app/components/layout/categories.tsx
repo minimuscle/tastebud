@@ -1,34 +1,17 @@
 import {
   Box,
-  Button,
-  Center,
-  Divider,
-  Flex,
-  HStack,
-  Heading,
-  IconButton,
-  Image,
-  Img,
-  Link,
-  Spacer,
   Tab,
-  TabIndicator,
   TabList,
   Tabs,
   Text,
   VStack,
   createIcon,
-  extendTheme,
 } from '@chakra-ui/react'
-import { Fragment, useState } from 'react'
-import { motion } from 'framer-motion'
-import { FaUser } from 'react-icons/fa'
-import { Category } from '~/ts/interfaces/supabase_interfaces'
-import infinity from '~/public/icons/infinity-solid.svg'
-import { useNavigate, useSearchParams } from '@remix-run/react'
+import type { Category } from '~/ts/interfaces/supabase_interfaces'
+import { useSearchParams } from '@remix-run/react'
 
 export default function Categories({ categories }: { categories: Category[] }) {
-  const navigate = useNavigate()
+  //const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   console.log(searchParams.get('category'))
   const Everything = createIcon({

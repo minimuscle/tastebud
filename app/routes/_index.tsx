@@ -4,7 +4,6 @@ import {
   Button,
   Center,
   Flex,
-  HStack,
   IconButton,
   useMediaQuery,
 } from '@chakra-ui/react'
@@ -17,7 +16,7 @@ import type {
   LoaderArgs,
 } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { Outlet, useLoaderData } from '@remix-run/react'
+import { useLoaderData } from '@remix-run/react'
 import { createClient } from '@supabase/supabase-js'
 import { useState } from 'react'
 import Categories from '~/components/layout/categories'
@@ -55,7 +54,7 @@ export const loader: LoaderFunction = async ({
   params,
   request,
 }: LoaderArgs) => {
-  const { search } = params
+  //const { search } = params
   const url = new URL(request.url)
   const category = url.searchParams.get('category')
 

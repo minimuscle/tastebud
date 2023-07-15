@@ -16,7 +16,6 @@ import {
   MenuItem,
   MenuList,
   Spacer,
-  SystemStyleObject,
   Text,
   VStack,
   useMediaQuery,

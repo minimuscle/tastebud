@@ -1,7 +1,7 @@
-import { Box, Heading, SimpleGrid } from '@chakra-ui/react'
+import { SimpleGrid } from '@chakra-ui/react'
 import { useLoaderData } from '@remix-run/react'
 import LocationCard from '~/components/locationCard/LocationCard'
-import type { Category, Location } from '~/ts/interfaces/supabase_interfaces'
+import type { Location } from '~/ts/interfaces/supabase_interfaces'
 
 export default function InfoPanel() {
   const { locations }: { locations: Location[] } = useLoaderData()
