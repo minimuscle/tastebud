@@ -4,9 +4,10 @@ import {
   Flex,
   HStack,
   Heading,
-  SimpleGrid,
   Spacer,
   Text,
+  Wrap,
+  WrapItem,
 } from '@chakra-ui/react'
 import {
   type LinksFunction,
@@ -20,9 +21,14 @@ import Rating from 'react-rating'
 import SmallHeader from '~/components/layout/smallHeader'
 import ReviewCard from '~/components/location/reviewCard'
 import styles from '~/styles/global.css'
-import type { Category, Location } from '~/ts/interfaces/supabase_interfaces'
+import type {
+  Category,
+  Location,
+  Review,
+} from '~/ts/interfaces/supabase_interfaces'
 import {
   supabaseSelectAll,
+  supabaseSelectWhere,
   supabaseSelectWhereSingle,
 } from '~/util/database/supabase'
 
@@ -34,16 +40,23 @@ export const loader: LoaderFunction = async ({ params }: LoaderArgs) => {
     locationId
   )
   const categories = (await supabaseSelectAll('categories')) as Category[]
-
-  //console.log(categories)
   //get only the categories that are in the location
   const selectedCategories = categories?.filter((category) => {
     return location.category?.includes(category.value)
   })
 
+  //get all the reviews for the location
+  const reviews = await supabaseSelectWhere(
+    'reviews',
+    'location_id',
+    locationId
+  )
+  console.log(reviews)
+
   const returnData = {
     location: location,
     categories: selectedCategories,
+    reviews: reviews,
   }
   return returnData
 }
@@ -60,9 +73,10 @@ export const links: LinksFunction = () => {
 }
 
 export default function Location() {
-  const { location, categories } = useLoaderData<{
+  const { location, categories, reviews } = useLoaderData<{
     location: Location
     categories: Category[]
+    reviews: Review[]
   }>()
 
   return (
@@ -145,7 +159,22 @@ export default function Location() {
         })}
       </Flex>
       <Divider m="20px 0" />
-      <ReviewCard />
+      <Heading
+        as="h2"
+        fontSize="2xl"
+        mb="20px"
+      >
+        Reviews
+      </Heading>
+      <Wrap>
+        {reviews.map((review, id) => {
+          return (
+            <WrapItem key={id}>
+              <ReviewCard review={review} />
+            </WrapItem>
+          )
+        })}
+      </Wrap>
     </Container>
   )
 }
