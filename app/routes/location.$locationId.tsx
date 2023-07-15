@@ -17,9 +17,10 @@ import {
 } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import type { V2_MetaArgs } from '@remix-run/react'
+import React from 'react'
 import { BsStarFill } from 'react-icons/bs'
 import Rating from 'react-rating'
-import SmallHeader from '~/components/layout/smallHeader'
+import Header from '~/components/layout/header'
 import ReviewCard from '~/components/location/reviewCard'
 import styles from '~/styles/global.css'
 import type {
@@ -28,6 +29,7 @@ import type {
   Review,
 } from '~/ts/interfaces/supabase_interfaces'
 import {
+  getAverageRatings,
   supabaseSelectAll,
   supabaseSelectWhere,
   supabaseSelectWhereSingle,
@@ -46,19 +48,23 @@ export const loader: LoaderFunction = async ({ params }: LoaderArgs) => {
     return location.category?.includes(category.value)
   })
 
+  const ratings = (await getAverageRatings([location]))[0]
+
   //get all the reviews for the location
   const reviews = await supabaseSelectWhere(
     'reviews',
     'location_id',
     locationId
   )
-  console.log(reviews)
+  //console.log(reviews)
 
   const returnData = {
     location: location,
     categories: selectedCategories,
     reviews: reviews,
+    rating: ratings,
   }
+  console.log(returnData)
   return returnData
 }
 
@@ -74,10 +80,11 @@ export const links: LinksFunction = () => {
 }
 
 export default function Location() {
-  const { location, categories, reviews } = useLoaderData<{
+  const { location, categories, reviews, rating } = useLoaderData<{
     location: Location
     categories: Category[]
     reviews: Review[]
+    rating: [number, number]
   }>()
 
   return (
@@ -85,7 +92,7 @@ export default function Location() {
       maxW="container.xl"
       //border="1px black solid"
     >
-      <SmallHeader />
+      <Header small />
       <Divider
         mt={['20px', null, 0]}
         position="absolute"
@@ -104,7 +111,7 @@ export default function Location() {
           {/** Disable Typescript for component below
            * @ts-ignore */}
           <Rating
-            initialRating={3}
+            initialRating={rating[0]}
             readonly
             fractions={2}
             emptySymbol={
@@ -120,7 +127,7 @@ export default function Location() {
               />
             }
           />{' '}
-          (0) 123 Reviews
+          ({rating[0]}) {rating[1]} Review{rating[1] === 1 ? '' : 's'}
         </Text>
         <Text color="gray.400">{location.address}</Text>
       </HStack>
@@ -128,11 +135,8 @@ export default function Location() {
       <Flex>
         {categories.map((category, id) => {
           return (
-            <>
-              <Text
-                fontSize="lg"
-                key={id}
-              >
+            <React.Fragment key={id}>
+              <Text fontSize="lg">
                 {category.label}: {id}
                 {/* @ts-ignore */}
                 <Rating
@@ -155,7 +159,7 @@ export default function Location() {
                 (0)
               </Text>
               <Spacer />
-            </>
+            </React.Fragment>
           )
         })}
       </Flex>

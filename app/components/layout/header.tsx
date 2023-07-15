@@ -22,7 +22,7 @@ import {
 } from '@chakra-ui/react'
 import { FaSearch } from 'react-icons/fa'
 
-export default function Header() {
+export default function Header({ small }: { small?: boolean }) {
   const [smallerThan768] = useMediaQuery('(max-width: 768px)')
 
   if (smallerThan768) {
@@ -67,7 +67,7 @@ export default function Header() {
   return (
     <Flex
       height="80px"
-      p="15px 50px"
+      p={small ? '15px 0px' : '15px 50px'}
       overflow="hidden"
       minWidth="max-content"
     >

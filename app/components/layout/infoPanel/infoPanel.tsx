@@ -4,17 +4,22 @@ import LocationCard from '~/components/locationCard/LocationCard'
 import type { Location } from '~/ts/interfaces/supabase_interfaces'
 
 export default function InfoPanel() {
-  const { locations }: { locations: Location[] } = useLoaderData()
+  const {
+    locations,
+    ratings,
+  }: { locations: Location[]; ratings: Array<Number[]> } = useLoaderData()
+  console.log(ratings)
   return (
     <SimpleGrid
       columns={[1, 1, 1, 2, null, 3]}
       spacing={'20px'}
       padding={'20px'}
     >
-      {locations.map((location) => (
+      {locations.map((location, id) => (
         <LocationCard
-          key={location.id}
+          key={id}
           location={location}
+          rating={ratings[id]}
         />
       ))}
     </SimpleGrid>

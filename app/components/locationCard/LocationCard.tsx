@@ -13,7 +13,14 @@ import { BsStarFill } from 'react-icons/bs'
 import Rating from 'react-rating'
 import type { Category, Location } from '~/ts/interfaces/supabase_interfaces'
 
-export default function LocationCard({ location }: { location: Location }) {
+export default function LocationCard({
+  location,
+  rating,
+}: {
+  location: Location
+  rating: any
+}) {
+  //console.log(rating[0])
   const { categories } = useLoaderData<{ categories: Category[] }>()
   return (
     <Card>
@@ -22,9 +29,8 @@ export default function LocationCard({ location }: { location: Location }) {
           {/** Disable Typescript for component below
            * @ts-ignore */}
           <Rating
-            initialRating={3}
+            initialRating={rating[0]}
             readonly
-            fractions={2}
             emptySymbol={
               <BsStarFill
                 size="18px"
@@ -38,7 +44,7 @@ export default function LocationCard({ location }: { location: Location }) {
               />
             }
           />{' '}
-          (0) 123 Reviews
+          ({rating[0]}) {rating[1]} Review{rating[1] === 1 ? '' : 's'}
         </Text>
         <Heading
           size="xs"

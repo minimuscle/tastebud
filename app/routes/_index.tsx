@@ -28,6 +28,9 @@ import { motion } from 'framer-motion'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import InfoPanel from '~/components/layout/infoPanel/infoPanel'
 import {
+  getAverageRatings,
+  supabaseAverageReviews,
+  supabaseCountReviews,
   supabaseSelectAll,
   supabaseSelectContains,
   supabaseSelectWhere,
@@ -60,45 +63,52 @@ export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
   const category = url.searchParams.get('category') || 'all'
 
   //get categories from supabase
-  const categories = await supabaseSelectAll('categories')
+  const categories = (await supabaseSelectAll('categories')) as Category[]
 
   //get locations based on category chosen (in search params)
   const locations =
     category === 'all'
-      ? await supabaseSelectAll('locations')
-      : await supabaseSelectContains('locations', 'category', category)
+      ? ((await supabaseSelectAll('locations')) as Location[])
+      : ((await supabaseSelectContains(
+          'locations',
+          'category',
+          category
+        )) as Location[])
 
   //get the selected categories
   const selected = await supabaseSelectWhere('categories', 'value', category)
+  //get the average rating for the each location then reduce to single array
+  const ratings = await getAverageRatings(locations)
 
   const returnData = {
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY!,
     categories: categories,
     selected: selected,
     locations: locations,
+    ratings: ratings,
   }
   return returnData
 }
 
-export const action = async ({ request }: ActionArgs) => {
-  const body = await request.formData()
-  const placeId = body.get('placeId')
-  console.log(placeId)
+// export const action = async ({ request }: ActionArgs) => {
+//   const body = await request.formData()
+//   const placeId = body.get('placeId')
+//   console.log(placeId)
 
-  //search supabase for the placeId
-  const supabase = createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_KEY!
-  )
-  const { data: place, error }: { data: Location | null; error: any } =
-    await supabase.from('locations').select('*').eq('id', placeId).single()
-  if (error) {
-    console.log(error)
-    return json({ error: 'Error fetching place' }, { status: 500 })
-  }
+//   //search supabase for the placeId
+//   const supabase = createClient(
+//     process.env.SUPABASE_URL!,
+//     process.env.SUPABASE_KEY!
+//   )
+//   const { data: place, error }: { data: Location | null; error: any } =
+//     await supabase.from('locations').select('*').eq('id', placeId).single()
+//   if (error) {
+//     console.log(error)
+//     return json({ error: 'Error fetching place' }, { status: 500 })
+//   }
 
-  return place
-}
+//   return place
+// }
 
 export default function Index() {
   const loaderData = useLoaderData<LoaderData>()
@@ -111,6 +121,7 @@ export default function Index() {
     categories: Category[]
     selected: Category[]
     locations: Location[]
+    rating: Array<Number[]> | null
   }
 
   if (loaderData.error) {

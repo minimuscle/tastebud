@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import type { Location } from '~/ts/interfaces/supabase_interfaces'
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -70,4 +71,51 @@ export const supabaseSelectContains = async (
     return null
   }
   return data
+}
+
+export const supabaseAverageReviews = async (location: string) => {
+  const { data, error } = await supabase.rpc('average_reviews', {
+    location_id_param: location,
+  })
+  if (error) {
+    console.log(error)
+    return null
+  }
+  return data
+}
+
+export const supabaseCountReviews = async (location: string) => {
+  const { count, error } = await supabase
+    .from('reviews')
+    .select('*', { count: 'exact', head: true })
+    .eq('location_id', location)
+  if (error) {
+    console.log(error)
+    return null
+  }
+  return count
+}
+
+export const getAverageRatings = async (locations: Location[]) => {
+  const averageRating = await Promise.all(
+    locations.map(async (location) => {
+      const average = await supabaseAverageReviews(location.id)
+      return average || 0
+    })
+  )
+
+  //get the count of reviews for each location
+  const ratingsCount = await Promise.all(
+    locations.map(async (location) => {
+      const count = await supabaseCountReviews(location.id)
+      return count
+    })
+  )
+
+  //combine ratingscount and averageRatings into an array of arrays
+  const ratings = averageRating.map((rating, index) => {
+    return [rating, ratingsCount[index]]
+  })
+
+  return ratings
 }

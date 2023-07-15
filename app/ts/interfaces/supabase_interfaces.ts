@@ -6,7 +6,7 @@ export interface Category {
 }
 
 export interface Location {
-  id: number
+  id: string
   name: string
   address: string
   hash: string
