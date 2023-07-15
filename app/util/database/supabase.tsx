@@ -39,6 +39,23 @@ export const supabaseSelectWhere = async (
   return data
 }
 
+export const supabaseSelectWhereSingle = async (
+  table: string,
+  column: string,
+  value: string
+) => {
+  const { data, error } = await supabase
+    .from(table)
+    .select('*')
+    .eq(column, value)
+    .single()
+  if (error) {
+    console.log(error)
+    return null
+  }
+  return data
+}
+
 export const supabaseSelectContains = async (
   table: string,
   column: string,
