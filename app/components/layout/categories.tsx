@@ -8,11 +8,10 @@ import {
   createIcon,
 } from '@chakra-ui/react'
 import type { Category } from '~/ts/interfaces/supabase_interfaces'
-import { useLoaderData, useSearchParams } from '@remix-run/react'
+import { useSearchParams } from '@remix-run/react'
 
 export default function Categories({ categories }: { categories: Category[] }) {
-  const [, setSearchParams] = useSearchParams()
-  const { search }: { search: string } = useLoaderData()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const Everything = createIcon({
     viewBox: '0 0 640 512',
@@ -22,7 +21,9 @@ export default function Categories({ categories }: { categories: Category[] }) {
     <Tabs
       isFitted
       defaultIndex={
-        categories.findIndex((category) => category.value === search) + 1
+        categories.findIndex(
+          (category) => category.value === searchParams.get('category')
+        ) + 1
       }
     >
       <Box overflow="auto">

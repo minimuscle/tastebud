@@ -81,7 +81,6 @@ export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
     selected: selected,
     locations: locations,
     ratings: ratings,
-    search: category,
   }
   return returnData
 }
