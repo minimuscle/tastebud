@@ -108,12 +108,12 @@ export const getAverageRatings = async (locations: Location[]) => {
   const ratingsCount = await Promise.all(
     locations.map(async (location) => {
       const count = await supabaseCountReviews(location.id)
-      return count
+      return count || 0
     })
   )
 
   //combine ratingscount and averageRatings into an array of arrays
-  const ratings = averageRating.map((rating, index) => {
+  const ratings = averageRating.map((rating: number, index) => {
     return [rating, ratingsCount[index]]
   })
 

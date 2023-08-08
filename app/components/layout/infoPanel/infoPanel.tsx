@@ -8,7 +8,6 @@ export default function InfoPanel() {
     locations,
     ratings,
   }: { locations: Location[]; ratings: Array<Number[]> } = useLoaderData()
-  console.log(ratings)
   return (
     <SimpleGrid
       columns={[1, 1, 1, 2, null, 3]}

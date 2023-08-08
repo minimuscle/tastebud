@@ -9,15 +9,12 @@ import {
 } from '@chakra-ui/react'
 import { useLoadScript } from '@react-google-maps/api'
 import type {
-  ActionArgs,
   LinksFunction,
   V2_MetaFunction,
   LoaderFunction,
   LoaderArgs,
 } from '@remix-run/node'
-import { json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { createClient } from '@supabase/supabase-js'
 import { useState } from 'react'
 import Categories from '~/components/layout/categories'
 import Header from '~/components/layout/header'
@@ -29,8 +26,6 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import InfoPanel from '~/components/layout/infoPanel/infoPanel'
 import {
   getAverageRatings,
-  supabaseAverageReviews,
-  supabaseCountReviews,
   supabaseSelectAll,
   supabaseSelectContains,
   supabaseSelectWhere,
@@ -86,6 +81,7 @@ export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
     selected: selected,
     locations: locations,
     ratings: ratings,
+    search: category,
   }
   return returnData
 }
