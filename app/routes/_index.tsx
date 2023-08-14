@@ -100,6 +100,7 @@ export const action = async ({ request }: ActionArgs) => {
       const res = await googleResponse.json()
       console.log(res.result)
     }
+    console.log(location)
   }
   //Search supabase first for the ID, if it exists, return it, if not, search google maps
 

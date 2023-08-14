@@ -137,8 +137,7 @@ export default function Location() {
           return (
             <React.Fragment key={id}>
               <Text fontSize="lg">
-                {category.label}: {id}
-                {/* @ts-ignore */}
+                {category.label}: {/* @ts-ignore */}
                 <Rating
                   initialRating={3}
                   readonly

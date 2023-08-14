@@ -5,6 +5,7 @@ import {
   CardFooter,
   CardHeader,
   Divider,
+  Flex,
   HStack,
   Heading,
   Link,
@@ -38,13 +39,12 @@ export default function ReviewCard({ review }: { review: Review }) {
             h="10px"
             color={'gray.900'}
           />
-          <Text>
+          <Flex>
             {/** Disable Typescript for component below
              * @ts-ignore */}
             <Rating
               initialRating={review.rating}
               readonly
-              fractions={2}
               emptySymbol={
                 <BsStarFill
                   size="18px"
@@ -58,8 +58,15 @@ export default function ReviewCard({ review }: { review: Review }) {
                 />
               }
             />
-            - {review.rating} {review.rating === 1 ? 'Star' : 'Stars'}
-          </Text>
+            <Text
+              as="p"
+              fontSize="sm"
+              ml="5px"
+              mt="1px"
+            >
+              {review.rating} {review.rating === 1 ? 'Star' : 'Stars'}
+            </Text>
+          </Flex>
         </HStack>
       </CardHeader>
       <CardBody>

@@ -4,6 +4,7 @@ import {
   CardBody,
   CardFooter,
   Divider,
+  Flex,
   Heading,
   Link,
   Text,
@@ -25,7 +26,7 @@ export default function LocationCard({
   return (
     <Card>
       <CardBody>
-        <Text>
+        <Flex>
           {/** Disable Typescript for component below
            * @ts-ignore */}
           <Rating
@@ -43,9 +44,16 @@ export default function LocationCard({
                 color="#ffd500"
               />
             }
-          />{' '}
-          ({rating[0]}) {rating[1]} Review{rating[1] === 1 ? '' : 's'}
-        </Text>
+          />
+          <Text
+            as="p"
+            fontSize="sm"
+            ml="5px"
+          >
+            {rating[0]} ({rating[1]})
+          </Text>
+        </Flex>
+
         <Heading
           size="xs"
           textTransform="uppercase"
