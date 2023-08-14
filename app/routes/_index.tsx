@@ -133,10 +133,7 @@ export default function Index() {
       <Header />
       <Categories categories={loaderData.categories} />
       {isSmallerThan768 ? (
-        <Box
-          flex="1"
-          position="relative"
-        >
+        <Box flex="1">
           {!drawerOpen && <InfoPanel />}
           {isLoaded && drawerOpen && <Map />}
           <Center>

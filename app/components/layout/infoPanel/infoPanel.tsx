@@ -13,6 +13,8 @@ export default function InfoPanel() {
       columns={[1, 1, 1, 2, null, 3]}
       spacing={'20px'}
       padding={'20px'}
+      overflowY="scroll"
+      height={'80dvh'}
     >
       {locations.map((location, id) => (
         <LocationCard
