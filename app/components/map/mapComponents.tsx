@@ -23,13 +23,13 @@ export default function MapComponents() {
     setSearchParams(newParams)
   }
 
-  const handleClick = (event: any) => {
+  const handleClick = async (event: any) => {
     if (event.placeId) {
-      console.log(event)
       event.stop()
       //Search for the place ID on supabase before attempting to render the popup
-      //const placeId = event.placeId
-      //placeFetcher.submit({ placeId: placeId }, { method: 'post' })
+      const placeId = event.placeId
+      console.log(placeId)
+      placeFetcher.submit({ placeId: placeId }, { method: 'post' })
     }
   }
 
@@ -37,25 +37,13 @@ export default function MapComponents() {
     const draggedListener = map.addListener('dragend', handleMapMove)
     const zoomListener = map.addListener('zoom_changed', handleMapMove)
     const listener = map.addListener('click', handleClick)
+
     return () => {
       draggedListener.remove()
       listener.remove()
       zoomListener.remove()
     }
   }, [map, searchParams])
-
-  // useEffect(() => {
-  //     if (placeFetcher.state === 'idle' && placeFetcher.data) {
-  //         console.log('placeFetcher.data', placeFetcher.data)
-  //         const infowindow = new window.google.maps.InfoWindow()
-  //         const popupNode = document.createElement('React.Fragment')
-  //         const root = ReactDOMClient.createRoot(popupNode)
-  //         root.render(<PoiPopup />)
-  //         infowindow.setPosition(-37.8148, 144.9638)
-  //         infowindow.setContent(popupNode)
-  //         infowindow.open(map)
-  //     }
-  // }, [placeFetcher, map])
 
   return (
     <div>

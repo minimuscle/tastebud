@@ -13,6 +13,7 @@ import type {
   V2_MetaFunction,
   LoaderFunction,
   LoaderArgs,
+  ActionArgs,
 } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { useState } from 'react'
@@ -29,6 +30,7 @@ import {
   supabaseSelectAll,
   supabaseSelectContains,
   supabaseSelectWhere,
+  supabaseSelectWhereSingle,
 } from '~/util/database/supabase'
 
 export const meta: V2_MetaFunction = () => {
@@ -85,16 +87,31 @@ export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
   return returnData
 }
 
+export const action = async ({ request }: ActionArgs) => {
+  const body = await request.formData()
+  const placeId = body.get('placeId')?.toString()
+  if (placeId) {
+    const location = await supabaseSelectWhereSingle('locations', 'id', placeId)
+    if (!location) {
+      //search google maps for the placeId
+      const googleResponse = await fetch(
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${process.env.GOOGLE_MAPS_API_KEY}`
+      )
+      const res = await googleResponse.json()
+      console.log(res.result)
+    }
+  }
+  //Search supabase first for the ID, if it exists, return it, if not, search google maps
+
+  return null
+}
+
 // export const action = async ({ request }: ActionArgs) => {
-//   const body = await request.formData()
+//
 //   const placeId = body.get('placeId')
 //   console.log(placeId)
 
 //   //search supabase for the placeId
-//   const supabase = createClient(
-//     process.env.SUPABASE_URL!,
-//     process.env.SUPABASE_KEY!
-//   )
 //   const { data: place, error }: { data: Location | null; error: any } =
 //     await supabase.from('locations').select('*').eq('id', placeId).single()
 //   if (error) {
