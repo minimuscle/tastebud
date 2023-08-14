@@ -1,6 +1,7 @@
 import { MarkerF, useGoogleMap } from '@react-google-maps/api'
 import { useFetcher, useSearchParams } from '@remix-run/react'
 import { useEffect } from 'react'
+import type { SearchParamTypes } from '~/ts/interfaces/maps_interfaces'
 
 export default function MapComponents() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -10,14 +11,15 @@ export default function MapComponents() {
   const handleMapMove = async () => {
     console.log('drag end')
 
-    let newParams = {}
+    let newParams: SearchParamTypes = {}
     for (const [key, value] of searchParams.entries()) {
       console.log(`${key}, ${value}`)
       newParams[key] = value
     }
-    newParams['lat'] = map.getCenter().lat()
-    newParams['lng'] = map.getCenter().lng()
+    newParams['lat'] = map.getCenter()!.lat()
+    newParams['lng'] = map.getCenter()!.lng()
     map.setCenter({ lat: newParams['lat'], lng: newParams['lng'] })
+    // @ts-ignore
     setSearchParams(newParams)
   }
 

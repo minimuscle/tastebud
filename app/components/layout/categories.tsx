@@ -9,9 +9,21 @@ import {
 } from '@chakra-ui/react'
 import type { Category } from '~/ts/interfaces/supabase_interfaces'
 import { useSearchParams } from '@remix-run/react'
+import type { SearchParamTypes } from '~/ts/interfaces/maps_interfaces'
 
 export default function Categories({ categories }: { categories: Category[] }) {
   const [searchParams, setSearchParams] = useSearchParams()
+
+  const updateSearch = async (category: string) => {
+    let newParams: SearchParamTypes = {}
+    for (const [key, value] of searchParams.entries()) {
+      console.log(`${key}, ${value}`)
+      newParams[key] = value
+    }
+    newParams['category'] = category
+    // @ts-ignore This is because the type of setSearchParams is not correct, it takes any option in this type
+    setSearchParams(newParams)
+  }
 
   const Everything = createIcon({
     viewBox: '0 0 640 512',
@@ -47,7 +59,7 @@ export default function Categories({ categories }: { categories: Category[] }) {
               borderBottom: '2px solid',
               borderColor: 'gray.700',
             }}
-            onClick={() => setSearchParams({ category: 'all' })}
+            onClick={() => updateSearch('all')}
           >
             <VStack>
               <Everything boxSize={5} />
@@ -83,7 +95,7 @@ export default function Categories({ categories }: { categories: Category[] }) {
                   borderBottom: '2px solid',
                   borderColor: 'gray.700',
                 }}
-                onClick={() => setSearchParams({ category: category.value })}
+                onClick={() => updateSearch(category.value)}
                 key={key}
               >
                 <VStack>
