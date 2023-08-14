@@ -107,13 +107,12 @@ export default function Location() {
         {location.name}
       </Heading>
       <HStack mt="10px">
-        <Text>
+        <Flex mt="1px">
           {/** Disable Typescript for component below
            * @ts-ignore */}
           <Rating
             initialRating={rating[0]}
             readonly
-            fractions={2}
             emptySymbol={
               <BsStarFill
                 size="18px"
@@ -126,9 +125,16 @@ export default function Location() {
                 color="#ffd500"
               />
             }
-          />{' '}
-          ({rating[0]}) {rating[1]} Review{rating[1] === 1 ? '' : 's'}
-        </Text>
+          />
+          <Text
+            as="p"
+            fontSize="sm"
+            ml="5px"
+            mt="1px"
+          >
+            {rating[0]} ({rating[1]})
+          </Text>
+        </Flex>
         <Text color="gray.400">{location.address}</Text>
       </HStack>
       <Divider m="20px 0" />
