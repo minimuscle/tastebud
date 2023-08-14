@@ -1,27 +1,46 @@
-import { MarkerF, useGoogleMap } from "@react-google-maps/api"
-import { useFetcher } from "@remix-run/react"
-import { useEffect } from "react"
-import PoiPopup from "~/components/map/mapItems/poiPopup"
-import * as ReactDOMClient from "react-dom/client"
+import { MarkerF, useGoogleMap } from '@react-google-maps/api'
+import { useFetcher, useSearchParams } from '@remix-run/react'
+import { useEffect } from 'react'
 
 export default function MapComponents() {
-  const map = useGoogleMap()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const map = useGoogleMap()!
   const placeFetcher = useFetcher()
 
-  useEffect(() => {
-    const listener = map!.addListener("click", async (event: any) => {
-      if (event.placeId) {
-        console.log(event)
-        event.stop()
-        //Search for the place ID on supabase before attempting to render the popup
-        const placeId = event.placeId
-        placeFetcher.submit({ placeId: placeId }, { method: "post" })
-      }
-    })
-    return () => {
-      listener.remove()
+  const handleMapMove = async () => {
+    console.log('drag end')
+
+    let newParams = {}
+    for (const [key, value] of searchParams.entries()) {
+      console.log(`${key}, ${value}`)
+      newParams[key] = value
     }
-  }, [map, placeFetcher])
+    newParams['lat'] = map.getCenter().lat()
+    newParams['lng'] = map.getCenter().lng()
+    map.setCenter({ lat: newParams['lat'], lng: newParams['lng'] })
+    setSearchParams(newParams)
+  }
+
+  const handleClick = (event: any) => {
+    if (event.placeId) {
+      console.log(event)
+      event.stop()
+      //Search for the place ID on supabase before attempting to render the popup
+      //const placeId = event.placeId
+      //placeFetcher.submit({ placeId: placeId }, { method: 'post' })
+    }
+  }
+
+  useEffect(() => {
+    const draggedListener = map.addListener('dragend', handleMapMove)
+    const zoomListener = map.addListener('zoom_changed', handleMapMove)
+    const listener = map.addListener('click', handleClick)
+    return () => {
+      draggedListener.remove()
+      listener.remove()
+      zoomListener.remove()
+    }
+  }, [map, searchParams])
 
   // useEffect(() => {
   //     if (placeFetcher.state === 'idle' && placeFetcher.data) {
@@ -40,7 +59,7 @@ export default function MapComponents() {
     <div>
       <MarkerF
         position={{ lat: -37.8148, lng: 144.9638 }}
-        onClick={() => console.log("CLICKED")}
+        onClick={() => console.log('CLICKED')}
       />
     </div>
   )
