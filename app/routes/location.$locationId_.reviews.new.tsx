@@ -9,6 +9,7 @@ import {
   Input,
   Stack,
   Text,
+  Textarea,
   VStack,
 } from '@chakra-ui/react'
 import {
@@ -26,20 +27,28 @@ import styles from '~/styles/global.css'
 import { useState } from 'react'
 import type { Category, Location } from '~/ts/interfaces/supabase_interfaces'
 import ReactSelect from 'react-select'
-import { supabaseInsert, supabaseSelectAll } from '~/util/database/supabase'
+import {
+  supabaseInsert,
+  supabaseSelectAll,
+  supabaseSelectWhereSingle,
+} from '~/util/database/supabase'
 
 export const loader: LoaderFunction = async ({ params }: LoaderArgs) => {
   const placeId = params.locationId as string
-  //search google maps for the placeId
-  const googleResponse = await fetch(
-    `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${process.env.GOOGLE_MAPS_API_KEY}`
-  )
-  const res = await googleResponse.json()
+
+  //get list of all categories
   const categories = (await supabaseSelectAll('categories')) as Category[]
+
+  //get location based on placeId
+  const location = (await supabaseSelectWhereSingle(
+    'locations',
+    'id',
+    placeId
+  )) as Location
 
   return {
     categories: categories,
-    locationData: res.result,
+    location: location,
   }
 }
 
@@ -63,7 +72,7 @@ export const action: ActionFunction = async ({ request }: ActionArgs) => {
 
 export const meta: V2_MetaFunction = ({ data }: { data: V2_MetaArgs }) => {
   return [
-    { title: `Add New Location - Tastebud Reviews` },
+    { title: `Add New Review - Tastebud Reviews` },
     { name: 'description', content: 'Welcome to Tastebud Reviews' },
   ]
 }
@@ -73,9 +82,9 @@ export const links: LinksFunction = () => {
 }
 
 export default function AddNewReview() {
-  const { categories, locationData } = useLoaderData()
-  const [name, setName] = useState(locationData.name)
-  const [address, setAddress] = useState(locationData.formatted_address)
+  const { categories, location } = useLoaderData()
+  const [name, setName] = useState('')
+  const [comment, setComment] = useState('')
 
   return (
     <>
@@ -90,14 +99,7 @@ export default function AddNewReview() {
         mt="20px"
         fontSize={'xl'}
       >
-        Edit and change the details below in order to create a new location.
-      </Text>
-      <Text
-        color={'gray.400'}
-        fontStyle={'italic'}
-      >
-        Note: All locations must be approved before they will appear on the map,
-        you will still be able to review it
+        Write a review for {location.name}
       </Text>
       <Divider m="20px 0" />
       <Container>
@@ -105,56 +107,77 @@ export default function AddNewReview() {
           <input
             type="hidden"
             name="id"
-            value={locationData.place_id}
-          />
-          <input
-            type="hidden"
-            name="lat"
-            value={locationData.geometry.location.lat}
-          />
-          <input
-            type="hidden"
-            name="lng"
-            value={locationData.geometry.location.lng}
+            value={location.id}
           />
           <VStack gap={10}>
             <FormControl>
-              <FormLabel>Location Name</FormLabel>
+              <FormLabel>Location</FormLabel>
+              <Input
+                disabled
+                value={location.name}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Name</FormLabel>
               <Input
                 value={name}
                 name="name"
                 onChange={(e) => setName(e.target.value)}
               />
+              <FormHelperText>
+                This will be replaced by user names once that section is up and
+                running, so please use an easy-to-recognise name for now
+              </FormHelperText>
             </FormControl>
+
             <FormControl>
-              <FormLabel>Location Address</FormLabel>
-              <Input
-                value={address}
-                name="address"
-                onChange={(e) => setAddress(e.target.value)}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>Location Categories</FormLabel>
+              <FormLabel>Select Categories for Review</FormLabel>
               <ReactSelect
-                options={categories}
+                options={location.category?.map((category: string) => {
+                  const matched = categories.find(
+                    (cat: { value: string; label: string }) =>
+                      cat.value === category
+                  )
+                  return {
+                    value: matched?.value,
+                    label: matched?.label,
+                  }
+                })}
                 isMulti
                 name="category"
                 placeholder="Search for categories..."
               />
               <FormHelperText>
-                You can type to search for a specific category, or select from
-                the list
-                <br />
-                Don't worry, we can add or remove these later
+                Select the items you wish to review
               </FormHelperText>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Review</FormLabel>
+              <Input
+                value={name}
+                name="name"
+                //onChange={(e) => setName(e.target.value)}
+              />
+              <FormHelperText>
+                This will be replaced by user names once that section is up and
+                running, so please use an easy-to-recognise name for now
+              </FormHelperText>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Comment</FormLabel>
+              <Textarea
+                value={comment}
+                name="comment"
+                height="200px"
+                onChange={(e) => setComment(e.target.value)}
+              />
             </FormControl>
             <Stack width={'100%'}>
               <Button
                 colorScheme="green"
                 type="submit"
               >
-                Submit Location
+                Submit Review
               </Button>
               <Button onClick={() => window.history.back()}>Cancel</Button>
             </Stack>
