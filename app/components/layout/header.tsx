@@ -98,7 +98,7 @@ export default function Header({ small }: { small?: boolean }) {
       >
         <Input
           size="lg"
-          placeholder="Search..."
+          placeholder="Search... (NOT IMPLEMENTED YET)"
           variant="filled"
           borderRadius="15px"
         />

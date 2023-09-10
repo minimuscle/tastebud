@@ -62,7 +62,7 @@ export default function NoLocationPopup({
             isLoading={fetchData.state !== 'idle'}
             onClick={() => {
               console.log('Add Location')
-              navigate(`/new/${fetchData.data?.place_id}`)
+              navigate(`/location/${fetchData.data?.place_id}/new`)
             }}
           >
             Add Location

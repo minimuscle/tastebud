@@ -72,20 +72,13 @@ export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: styles }]
 }
 
-export default function Location() {
+export default function AddLocation() {
   const { categories, locationData } = useLoaderData()
   const [name, setName] = useState(locationData.name)
   const [address, setAddress] = useState(locationData.formatted_address)
 
   return (
-    <Container maxW="container.xl">
-      <Header small />
-      <Divider
-        mt={['20px', null, 0]}
-        position="absolute"
-        left="0"
-        w="100vw"
-      />
+    <>
       <Heading
         mt={['40px', null, '20px']}
         as="h1"
@@ -168,6 +161,6 @@ export default function Location() {
           </VStack>
         </Form>
       </Container>
-    </Container>
+    </>
   )
 }

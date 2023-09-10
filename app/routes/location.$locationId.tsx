@@ -1,4 +1,5 @@
 import {
+  Button,
   Container,
   Divider,
   Flex,
@@ -15,7 +16,7 @@ import {
   type LoaderFunction,
   type V2_MetaFunction,
 } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import { useLoaderData, useNavigate } from '@remix-run/react'
 import type { V2_MetaArgs } from '@remix-run/react'
 import { BsStarFill } from 'react-icons/bs'
 import React from 'react'
@@ -86,19 +87,10 @@ export default function Location() {
     reviews: Review[]
     rating: [number, number]
   }>()
+  const navigate = useNavigate()
 
   return (
-    <Container
-      maxW="container.xl"
-      //border="1px black solid"
-    >
-      <Header small />
-      <Divider
-        mt={['20px', null, 0]}
-        position="absolute"
-        left="0"
-        w="100vw"
-      />
+    <>
       <Heading
         mt={['40px', null, '20px']}
         as="h1"
@@ -143,7 +135,7 @@ export default function Location() {
           return (
             <React.Fragment key={id}>
               <Text fontSize="lg">
-                {category.label}: {/* @ts-ignore */}
+                {category.label}:{/* @ts-ignore */}
                 <Rating
                   initialRating={3}
                   readonly
@@ -176,6 +168,14 @@ export default function Location() {
       >
         Reviews
       </Heading>
+      {reviews.length == 0 && <Text fontSize="lg">No reviews found</Text>}
+      <Button
+        mt="25px"
+        colorScheme="red"
+        onClick={() => navigate('./reviews/new')}
+      >
+        Add Review
+      </Button>
       <Wrap>
         {reviews.map((review, id) => {
           return (
@@ -185,6 +185,6 @@ export default function Location() {
           )
         })}
       </Wrap>
-    </Container>
+    </>
   )
 }
