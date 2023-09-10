@@ -1,4 +1,6 @@
 import {
+  Button,
+  ButtonGroup,
   Container,
   Divider,
   Flex,
@@ -8,6 +10,7 @@ import {
   HStack,
   Heading,
   Input,
+  Stack,
   Text,
   VStack,
 } from '@chakra-ui/react'
@@ -105,6 +108,15 @@ export default function Location() {
                 Don't worry, we can add or remove these later
               </FormHelperText>
             </FormControl>
+            <Stack width={'100%'}>
+              <Button
+                colorScheme="green"
+                type="submit"
+              >
+                Submit Location
+              </Button>
+              <Button onClick={() => window.history.back()}>Cancel</Button>
+            </Stack>
           </VStack>
         </form>
       </Container>
