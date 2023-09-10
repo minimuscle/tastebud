@@ -82,7 +82,7 @@ export default function Location() {
       </Text>
       <Divider m="20px 0" />
       <Container>
-        <form>
+        <form method="POST">
           <VStack gap={10}>
             <FormControl>
               <FormLabel>Location Name</FormLabel>
