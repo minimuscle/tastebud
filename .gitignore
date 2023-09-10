@@ -11,3 +11,9 @@ node_modules
 /api/
 .vscode/settings.json
 /.vscode
+api/metafile.css.json
+api/metafile.js.json
+.gitignore
+api/metafile.css.json
+api/metafile.js.json
+api/metafile.server.json

@@ -7,7 +7,6 @@ import {
   Skeleton,
   Stack,
   Text,
-  VStack,
 } from '@chakra-ui/react'
 import { useNavigate } from '@remix-run/react'
 // import Rating from 'react-rating'
