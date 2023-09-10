@@ -63,8 +63,9 @@ export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
   const categories = (await supabaseSelectAll('categories')) as Category[]
 
   //get the locations based on the map - if no map, then the zoom should be set to 10
-
+  //TODO: Fix this with locations based on zoom
   const test = await getClosestLocations(-37.8148, 144.9638, 10)
+
   console.log('results: ', test)
   //get locations based on category chosen (in search params)
   const locations =
@@ -100,29 +101,13 @@ export const action = async ({ request }: ActionArgs) => {
       )
       const res = await googleResponse.json()
       console.log(res.result)
+      console.log('returning')
+      return res.result
     }
     console.log(location)
   }
-  //Search supabase first for the ID, if it exists, return it, if not, search google maps
-
   return null
 }
-
-// export const action = async ({ request }: ActionArgs) => {
-//
-//   const placeId = body.get('placeId')
-//   console.log(placeId)
-
-//   //search supabase for the placeId
-//   const { data: place, error }: { data: Location | null; error: any } =
-//     await supabase.from('locations').select('*').eq('id', placeId).single()
-//   if (error) {
-//     console.log(error)
-//     return json({ error: 'Error fetching place' }, { status: 500 })
-//   }
-
-//   return place
-// }
 
 export default function Index() {
   const loaderData = useLoaderData<LoaderData>()
