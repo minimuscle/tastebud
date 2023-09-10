@@ -2,15 +2,18 @@ import {
   Button,
   Container,
   Divider,
+  Flex,
   FormControl,
   FormHelperText,
   FormLabel,
   Heading,
   Input,
+  SimpleGrid,
   Stack,
   Text,
   Textarea,
   VStack,
+  Wrap,
 } from '@chakra-ui/react'
 import {
   type ActionArgs,
@@ -24,7 +27,7 @@ import {
 import { Form, useLoaderData, type V2_MetaArgs } from '@remix-run/react'
 import Header from '~/components/layout/header'
 import styles from '~/styles/global.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Category, Location } from '~/ts/interfaces/supabase_interfaces'
 import ReactSelect from 'react-select'
 import {
@@ -32,6 +35,8 @@ import {
   supabaseSelectAll,
   supabaseSelectWhereSingle,
 } from '~/util/database/supabase'
+import Rating from 'react-rating'
+import { BsStarFill } from 'react-icons/bs'
 
 export const loader: LoaderFunction = async ({ params }: LoaderArgs) => {
   const placeId = params.locationId as string
@@ -85,6 +90,13 @@ export default function AddNewReview() {
   const { categories, location } = useLoaderData()
   const [name, setName] = useState('')
   const [comment, setComment] = useState('')
+  const [title, setTitle] = useState('')
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
+  const [rating, setRating] = useState({})
+
+  useEffect(() => {
+    console.log(rating)
+  }, [rating])
 
   return (
     <>
@@ -146,22 +158,67 @@ export default function AddNewReview() {
                 isMulti
                 name="category"
                 placeholder="Search for categories..."
+                onChange={(e) => setSelectedCategories(e)}
               />
               <FormHelperText>
                 Select the items you wish to review
               </FormHelperText>
             </FormControl>
+            <SimpleGrid
+              width={'100%'}
+              columns={3}
+              display={selectedCategories.length == 0 ? 'none' : 'grid'}
+            >
+              {selectedCategories.map((category, key) => {
+                return (
+                  <FormControl key={key}>
+                    <FormLabel>{category.label}</FormLabel>
+                    <Flex>
+                      {/* @ts-ignore */}
+                      <Rating
+                        //value={rating[category.value]}
+                        fractions={2}
+                        onChange={(e) => {
+                          setRating({
+                            ...rating,
+                            [category.value]: e,
+                          })
+                        }}
+                        initialRating={rating[category.value] || 0}
+                        emptySymbol={
+                          <BsStarFill
+                            size="21px"
+                            color="#d6d6d6"
+                          />
+                        }
+                        fullSymbol={
+                          <BsStarFill
+                            size="21px"
+                            color="#ffd500"
+                          />
+                        }
+                      />
+                      <Text
+                        as="p"
+                        fontSize="md"
+                        ml="5px"
+                        mt="1px"
+                      >
+                        {rating[category.value] || 0} / 5
+                      </Text>
+                    </Flex>
+                  </FormControl>
+                )
+              })}
+            </SimpleGrid>
             <FormControl>
-              <FormLabel>Review</FormLabel>
+              <FormLabel>Title</FormLabel>
               <Input
-                value={name}
-                name="name"
-                //onChange={(e) => setName(e.target.value)}
+                value={title}
+                name="title"
+                onChange={(e) => setTitle(e.target.value)}
               />
-              <FormHelperText>
-                This will be replaced by user names once that section is up and
-                running, so please use an easy-to-recognise name for now
-              </FormHelperText>
+              <FormHelperText>Title Your Review</FormHelperText>
             </FormControl>
             <FormControl>
               <FormLabel>Comment</FormLabel>
