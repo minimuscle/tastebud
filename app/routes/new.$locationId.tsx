@@ -21,7 +21,9 @@ import { useLoaderData, type V2_MetaArgs } from '@remix-run/react'
 import Header from '~/components/layout/header'
 import styles from '~/styles/global.css'
 import { useState } from 'react'
-import type { Location } from '~/ts/interfaces/supabase_interfaces'
+import type { Category, Location } from '~/ts/interfaces/supabase_interfaces'
+import ReactSelect from 'react-select'
+import { supabaseSelectAll } from '~/util/database/supabase'
 
 export const loader: LoaderFunction = async ({ params }: LoaderArgs) => {
   const placeId = params.locationId as string
@@ -30,9 +32,12 @@ export const loader: LoaderFunction = async ({ params }: LoaderArgs) => {
     `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${process.env.GOOGLE_MAPS_API_KEY}`
   )
   const res = await googleResponse.json()
-  console.log(res.result)
-  console.log('returning')
-  return res.result
+  const categories = (await supabaseSelectAll('categories')) as Category[]
+
+  return {
+    categories: categories,
+    locationData: res.result,
+  }
 }
 
 export const meta: V2_MetaFunction = ({ data }: { data: V2_MetaArgs }) => {
@@ -47,9 +52,9 @@ export const links: LinksFunction = () => {
 }
 
 export default function Location() {
-  const loaderData = useLoaderData()
-  const [name, setName] = useState(loaderData.name)
-  const [address, setAddress] = useState(loaderData.formatted_address)
+  const { categories, locationData } = useLoaderData()
+  const [name, setName] = useState(locationData.name)
+  const [address, setAddress] = useState(locationData.formatted_address)
 
   return (
     <Container maxW="container.xl">
@@ -100,8 +105,15 @@ export default function Location() {
             </FormControl>
             <FormControl>
               <FormLabel>Location Categories</FormLabel>
-              <Input />
+              <ReactSelect
+                options={categories}
+                isMulti
+                placeholder="Search for categories..."
+              />
               <FormHelperText>
+                You can type to search for a specific category, or select from
+                the list
+                <br />
                 Don't worry, we can add or remove these later
               </FormHelperText>
             </FormControl>
