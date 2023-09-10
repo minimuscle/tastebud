@@ -17,7 +17,6 @@ import {
 } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import type { V2_MetaArgs } from '@remix-run/react'
-import React from 'react'
 import { BsStarFill } from 'react-icons/bs'
 import Rating from 'react-rating'
 import Header from '~/components/layout/header'
@@ -51,11 +50,11 @@ export const loader: LoaderFunction = async ({ params }: LoaderArgs) => {
   const ratings = (await getAverageRatings([location]))[0]
 
   //get all the reviews for the location
-  const reviews = await supabaseSelectWhere(
+  const reviews = (await supabaseSelectWhere(
     'reviews',
     'location_id',
     locationId
-  )
+  )) as Review[]
   //console.log(reviews)
 
   const returnData = {
