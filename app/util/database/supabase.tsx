@@ -137,3 +137,12 @@ export const getClosestLocations = async (
   }
   return data
 }
+
+export const supabaseInsert = async (table: string, data: any) => {
+  const { error } = await supabase.from(table).insert(data)
+  if (error) {
+    console.log(error)
+    return null
+  }
+  return { status: 200 }
+}

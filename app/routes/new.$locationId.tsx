@@ -12,18 +12,21 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import {
+  type ActionArgs,
+  type ActionFunction,
+  redirect,
   type LinksFunction,
   type LoaderArgs,
   type LoaderFunction,
   type V2_MetaFunction,
 } from '@remix-run/node'
-import { useLoaderData, type V2_MetaArgs } from '@remix-run/react'
+import { Form, useLoaderData, type V2_MetaArgs } from '@remix-run/react'
 import Header from '~/components/layout/header'
 import styles from '~/styles/global.css'
 import { useState } from 'react'
 import type { Category, Location } from '~/ts/interfaces/supabase_interfaces'
 import ReactSelect from 'react-select'
-import { supabaseSelectAll } from '~/util/database/supabase'
+import { supabaseInsert, supabaseSelectAll } from '~/util/database/supabase'
 
 export const loader: LoaderFunction = async ({ params }: LoaderArgs) => {
   const placeId = params.locationId as string
@@ -38,6 +41,24 @@ export const loader: LoaderFunction = async ({ params }: LoaderArgs) => {
     categories: categories,
     locationData: res.result,
   }
+}
+
+export const action: ActionFunction = async ({ request }: ActionArgs) => {
+  const formData = await request.formData()
+  const values = Object.fromEntries(formData)
+
+  values['category'] = formData.getAll('category')
+  console.log(values)
+
+  //add the location to the database
+  const response = await supabaseInsert('locations', values)
+  console.log(response)
+  if (response?.status == 200) {
+    console.log('redirecting')
+    return redirect(`/location/${values.id}`)
+  }
+  console.log('error')
+  return null
 }
 
 export const meta: V2_MetaFunction = ({ data }: { data: V2_MetaArgs }) => {
@@ -87,12 +108,28 @@ export default function Location() {
       </Text>
       <Divider m="20px 0" />
       <Container>
-        <form method="POST">
+        <Form method="POST">
+          <input
+            type="hidden"
+            name="id"
+            value={locationData.place_id}
+          />
+          <input
+            type="hidden"
+            name="lat"
+            value={locationData.geometry.location.lat}
+          />
+          <input
+            type="hidden"
+            name="lng"
+            value={locationData.geometry.location.lng}
+          />
           <VStack gap={10}>
             <FormControl>
               <FormLabel>Location Name</FormLabel>
               <Input
                 value={name}
+                name="name"
                 onChange={(e) => setName(e.target.value)}
               />
             </FormControl>
@@ -100,6 +137,7 @@ export default function Location() {
               <FormLabel>Location Address</FormLabel>
               <Input
                 value={address}
+                name="address"
                 onChange={(e) => setAddress(e.target.value)}
               />
             </FormControl>
@@ -108,6 +146,7 @@ export default function Location() {
               <ReactSelect
                 options={categories}
                 isMulti
+                name="category"
                 placeholder="Search for categories..."
               />
               <FormHelperText>
@@ -127,7 +166,7 @@ export default function Location() {
               <Button onClick={() => window.history.back()}>Cancel</Button>
             </Stack>
           </VStack>
-        </form>
+        </Form>
       </Container>
     </Container>
   )
