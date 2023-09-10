@@ -14,6 +14,7 @@ import {
   Textarea,
   VStack,
   Wrap,
+  useMediaQuery,
 } from '@chakra-ui/react'
 import {
   type ActionArgs,
@@ -94,6 +95,9 @@ export default function AddNewReview() {
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
   const [rating, setRating] = useState({})
 
+  //get chakraui breakpoints less than 480
+  const [isSmallerThan480] = useMediaQuery('(max-width: 480px)')
+
   useEffect(() => {
     console.log(rating)
   }, [rating])
@@ -166,7 +170,7 @@ export default function AddNewReview() {
             </FormControl>
             <SimpleGrid
               width={'100%'}
-              columns={3}
+              columns={[1, 2, 3]}
               display={selectedCategories.length == 0 ? 'none' : 'grid'}
             >
               {selectedCategories.map((category, key) => {
@@ -207,6 +211,7 @@ export default function AddNewReview() {
                         {rating[category.value] || 0} / 5
                       </Text>
                     </Flex>
+                    {isSmallerThan480 && <Divider m="20px 0" />}
                   </FormControl>
                 )
               })}
