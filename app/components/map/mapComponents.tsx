@@ -9,11 +9,10 @@ export default function MapComponents() {
   const placeFetcher = useFetcher()
 
   const handleMapMove = async () => {
-    console.log('drag end')
+    console.log(map.getZoom())
 
     let newParams: SearchParamTypes = {}
     for (const [key, value] of searchParams.entries()) {
-      console.log(`${key}, ${value}`)
       newParams[key] = value
     }
     newParams['lat'] = map.getCenter()!.lat()

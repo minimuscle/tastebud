@@ -9,8 +9,9 @@ export interface Location {
   id: string
   name: string
   address: string
-  hash: string
   category?: Array<string>
+  lat: number
+  lng: number
 }
 
 export interface Review {

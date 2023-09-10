@@ -16,6 +16,7 @@ export const supabaseSelectAll = async (table: string) => {
 }
 
 export const supabaseSelectSingle = async (table: string) => {
+  //await getClosestLocations(lat, lng, zoom)
   const { data, error } = await supabase.from(table).select('*').single()
   if (error) {
     console.log(error)
@@ -118,4 +119,21 @@ export const getAverageRatings = async (locations: Location[]) => {
   })
 
   return ratings
+}
+
+export const getClosestLocations = async (
+  lat: number,
+  lng: number,
+  zoom: number
+) => {
+  const { data, error } = await supabase.rpc('get_closest_locations', {
+    current_lat: lat,
+    current_lng: lng,
+    distance_km: zoom,
+  })
+  if (error) {
+    console.log(error)
+    return null
+  }
+  return data
 }

@@ -26,7 +26,7 @@ export default function App() {
         />
         <script
           async
-          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_MAPS_API_KEY}&libraries=places`}
+          src={`https://maps.googleapis.com/maps/api/js?key=AIzaSyBJBt4l8DOJmt6ACvXMR1el8oesCVDSImI&libraries=places`}
         ></script>
         <Meta />
         <Links />

@@ -18,6 +18,7 @@ import {
 import { useLoaderData } from '@remix-run/react'
 import type { V2_MetaArgs } from '@remix-run/react'
 import { BsStarFill } from 'react-icons/bs'
+import React from 'react'
 import Rating from 'react-rating'
 import Header from '~/components/layout/header'
 import ReviewCard from '~/components/location/reviewCard'
@@ -36,11 +37,11 @@ import {
 
 export const loader: LoaderFunction = async ({ params }: LoaderArgs) => {
   const locationId = params.locationId as string
-  const location: Location = await supabaseSelectWhereSingle(
+  const location = (await supabaseSelectWhereSingle(
     'locations',
     'id',
     locationId
-  )
+  )) as Location
   const categories = (await supabaseSelectAll('categories')) as Category[]
   //get only the categories that are in the location
   const selectedCategories = categories?.filter((category) => {

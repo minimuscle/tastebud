@@ -27,9 +27,9 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import InfoPanel from '~/components/layout/infoPanel/infoPanel'
 import {
   getAverageRatings,
+  getClosestLocations,
   supabaseSelectAll,
   supabaseSelectContains,
-  supabaseSelectWhere,
   supabaseSelectWhereSingle,
 } from '~/util/database/supabase'
 
@@ -62,6 +62,10 @@ export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
   //get categories from supabase
   const categories = (await supabaseSelectAll('categories')) as Category[]
 
+  //get the locations based on the map - if no map, then the zoom should be set to 10
+
+  const test = await getClosestLocations(-37.8148, 144.9638, 10)
+  console.log('results: ', test)
   //get locations based on category chosen (in search params)
   const locations =
     category === 'all'
@@ -72,15 +76,12 @@ export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
           category
         )) as Location[])
 
-  //get the selected categories
-  const selected = await supabaseSelectWhere('categories', 'value', category)
   //get the average rating for the each location then reduce to single array
   const ratings = await getAverageRatings(locations)
 
   const returnData = {
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY!,
     categories: categories,
-    selected: selected,
     locations: locations,
     ratings: ratings,
   }
